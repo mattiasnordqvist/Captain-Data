@@ -19,15 +19,15 @@ namespace CaptainData
             _context = new Context(schemaInformation);
         }
 
-        public Captain Insert(string tableName, object overrides)
+        public Captain Insert(string tableName, object overrides = null)
         {
-            var overridesDictionary = overrides.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(overrides, null));
+            var overridesDictionary = overrides?.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(overrides, null));
             var instruction = new Instruction { TableName = tableName };
             var columns = _context.SchemaInformation[tableName];
 
             foreach (var column in columns)
             {
-                if (overridesDictionary.ContainsKey(column.ColumnName))
+                if (overridesDictionary?.ContainsKey(column.ColumnName) ?? false)
                 {
                     instruction[column.ColumnName] = overridesDictionary[column.ColumnName];
                 }
