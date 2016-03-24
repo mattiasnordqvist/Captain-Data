@@ -8,7 +8,7 @@
 
         public bool IsNullable { get; set; }
 
-        public SqlDataType SqlDataType { get; set; }
+        public SqlDataType DataType { get; set; }
 
         public bool IsIdentity { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 
 using CaptainData.Schema;
 
@@ -44,7 +45,7 @@ namespace CaptainData
             }
             else
             {
-                switch (column.SqlDataType)
+                switch (column.DataType)
                 {
                     case SqlDataType.Int:
                         instruction[column.ColumnName] = 0;
@@ -52,6 +53,8 @@ namespace CaptainData
                     case SqlDataType.Nvarchar:
                         instruction[column.ColumnName] = string.Empty;
                         break;
+                    case SqlDataType.Unknown:
+                        throw new ArgumentException();
                 }
             }
         }
