@@ -64,6 +64,8 @@ namespace CaptainData
                         break;
                     case SqlDataType.Unknown:
                         throw new ArgumentException();
+                    default:
+                        throw new NotImplementedException();
                 }
             }
         }
