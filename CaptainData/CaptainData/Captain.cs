@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 
 using CaptainData.Schema;
 
@@ -9,70 +8,38 @@ namespace CaptainData
     public class Captain
     {
         private readonly SqlConnection _sqlConnection;
-        private readonly Context _context;
+        private readonly CaptainContext _captainContext;
+        private readonly List<RuleSet> _rules = new List<RuleSet>(); 
 
         public Captain(SqlConnection sqlConnection)
         {
             _sqlConnection = sqlConnection;
 
             var schemaInformation = SchemaInformation.Create(sqlConnection);
-            _context = new Context(schemaInformation);
+            _captainContext = new CaptainContext(schemaInformation);
+            AddRules(new OverridesRuleSet());
+            AddRules(new DefaultRuleSet());
+        }
+
+        public void AddRules(RuleSet ruleSet)
+        {
+            _rules.Add(ruleSet.SetCaptainContext(_captainContext));
         }
 
         public Captain Insert(string tableName, object overrides = null)
         {
-            var overridesDictionary = overrides?.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(overrides, null));
-            var instruction = new Instruction { TableName = tableName };
-            var columns = _context.SchemaInformation[tableName];
-
-            foreach (var column in columns)
-            {
-                if (overridesDictionary?.ContainsKey(column.ColumnName) ?? false)
-                {
-                    instruction[column.ColumnName] = overridesDictionary[column.ColumnName];
-                }
-                else
-                {
-                    ApplyDefaults(instruction, column);
-                }
-            }
-
-            _context.AddInstruction(instruction);
+            var instructionContext = new InstructionContext { TableName = tableName, ["overrides"] = overrides ?? new {} };
+            var instruction = new RowInstruction();
+            instruction.SetTable(tableName);
+            _rules.ForEach(x => x.Apply(instruction, instructionContext));
+            _captainContext.AddInstruction(instruction);
             return this;
-        }
-
-        private void ApplyDefaults(Instruction instruction, ColumnSchema column)
-        {
-            if (column.IsIdentity)
-            {
-                return;
-            }
-
-            if (column.IsNullable)
-            {
-                instruction[column.ColumnName] = null;
-            }
-            else
-            {
-                switch (column.DataType)
-                {
-                    case SqlDataType.Int:
-                        instruction[column.ColumnName] = 0;
-                        break;
-                    case SqlDataType.Nvarchar:
-                        instruction[column.ColumnName] = string.Empty;
-                        break;
-                    case SqlDataType.Unknown:
-                        throw new ArgumentException();
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
         }
 
         public void Go()
         {
-            _context.Apply(_sqlConnection);
+            _captainContext.Apply(_sqlConnection);
+            _captainContext.Clear();
         }
     }
 }
