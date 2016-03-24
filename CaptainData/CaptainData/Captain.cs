@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Linq;
 
 using CaptainData.Schema;
 
@@ -18,14 +19,22 @@ namespace CaptainData
             _context = new Context(schemaInformation);
         }
 
-        public Captain Insert(string tableName)
+        public Captain Insert(string tableName, object overrides)
         {
+            var overridesDictionary = overrides.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(overrides, null));
             var instruction = new Instruction { TableName = tableName };
             var columns = _context.SchemaInformation[tableName];
 
             foreach (var column in columns)
             {
-                ApplyDefaults(instruction, column);
+                if (overridesDictionary.ContainsKey(column.ColumnName))
+                {
+                    instruction[column.ColumnName] = overridesDictionary[column.ColumnName];
+                }
+                else
+                {
+                    ApplyDefaults(instruction, column);
+                }
             }
 
             _context.AddInstruction(instruction);
