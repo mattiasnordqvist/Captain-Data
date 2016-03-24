@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Captain.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="Instruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schema\SchemaInformation.cs" />
     <Compile Include="Schema\ColumnSchema.cs" />
