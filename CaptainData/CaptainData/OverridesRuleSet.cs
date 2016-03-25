@@ -7,11 +7,11 @@ namespace CaptainData
 
         public override void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
         {
-            var overrides = instructionContext.GetContext<object>("overrides");
+            var overrides = instructionContext.Overrides;
 
             var overridesDictionary = overrides?.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(overrides, null));
 
-            var columns = CaptainContext.SchemaInformation[instructionContext.TableName];
+            var columns = instructionContext.CaptainContext.SchemaInformation[instructionContext.TableName];
             foreach (var column in columns)
             {
                 if (overridesDictionary?.ContainsKey(column.ColumnName) ?? false)

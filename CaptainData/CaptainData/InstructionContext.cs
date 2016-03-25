@@ -4,11 +4,10 @@ namespace CaptainData
 {
     public class InstructionContext : Dictionary<string, object>
     {
+        public CaptainContext CaptainContext { get; set; }
+
         public string TableName { get; set; }
 
-        public T GetContext<T>(string name)
-        {
-            return (T)this[name];
-        }
+        public object Overrides { get; set; }
     }
 }

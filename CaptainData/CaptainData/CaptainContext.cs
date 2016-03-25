@@ -9,10 +9,13 @@ namespace CaptainData
     {
         public SchemaInformation SchemaInformation { get; }
 
+        public Captain Captain { get; private set; }
+
         private readonly List<RowInstruction> _instructions = new List<RowInstruction>();
 
-        public CaptainContext(SchemaInformation schemaInformation)
+        public CaptainContext(Captain captain, SchemaInformation schemaInformation)
         {
+            Captain = captain;
             SchemaInformation = schemaInformation;
         }
 

@@ -9,7 +9,7 @@ namespace CaptainData
 
         public override void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
         {
-            var columns = CaptainContext.SchemaInformation[instructionContext.TableName];
+            var columns = instructionContext.CaptainContext.SchemaInformation[instructionContext.TableName];
             foreach (var column in columns)
             {
                 if (!rowInstruction.IsDefinedFor(column.ColumnName))
