@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <description>$description$</description>
+    <authors>Mattias Nordqvist</authors>
+    <owners>Mattias Nordqvist</owners>
+    <iconUrl>https://raw.githubusercontent.com/mattiasnordqvist/Captain-Data/master/icon.png</iconUrl>
+    <licenseUrl>https://raw.githubusercontent.com/mattiasnordqvist/Captain-Data/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/mattiasnordqvist/Captain-Data</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>SQLServer Fixtures</tags>
+    <dependencies>
+      <dependency id="Dapper" version="1.42.0" />
+    </dependencies>
+  </metadata>
+</package>
