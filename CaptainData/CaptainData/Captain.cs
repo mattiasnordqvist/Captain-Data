@@ -40,7 +40,7 @@ namespace CaptainData
         public Captain Insert(InstructionContext instructionContext)
         {
             var instruction = new RowInstruction();
-            instruction.SetTable(instructionContext.TableName);
+            instruction.SetContext(instructionContext);
             _rules.ForEach(x => x.Apply(instruction, instructionContext));
             _captainContext.AddInstruction(instruction);
             return this;

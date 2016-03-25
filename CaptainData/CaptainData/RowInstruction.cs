@@ -12,14 +12,14 @@ namespace CaptainData
     {
         private readonly Dictionary<string, ColumnInstruction> _columnInstructions = new Dictionary<string, ColumnInstruction>();
 
-        private string _tableName;
+        private InstructionContext _instructionContext;
 
         private readonly List<Action<SqlConnection>> _after = new List<Action<SqlConnection>>();
         private readonly List<Action<SqlConnection>> _before = new List<Action<SqlConnection>>();
 
-        public void SetTable(string tableName)
+        public void SetContext(InstructionContext instructionContext)
         {
-            _tableName = tableName;
+            _instructionContext = instructionContext;
         }
 
         public object this[string index]
@@ -38,9 +38,9 @@ namespace CaptainData
             }
             var sql = new StringBuilder();
             var columnValues = _columnInstructions.Where(x => x.Key != null).ToDictionary(x => x.Key, x => x.Value);
-            sql.AppendLine($"INSERT INTO {_tableName} ({string.Join(", ", columnValues.Keys)}) VALUES ({string.Join(", ", columnValues.Values.Select(x => ToSqlValue(x.Value)))});");
+            sql.AppendLine($"INSERT INTO {_instructionContext.TableName} ({string.Join(", ", columnValues.Keys)}) VALUES ({string.Join(", ", columnValues.Values.Select(x => ToSqlValue(x.Value)))});");
             connection.Execute(sql.ToString());
-
+            _instructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar("SELECT SCOPE_IDENTITY()");
             foreach (var action in _after)
             {
                 action(connection);

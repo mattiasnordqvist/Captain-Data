@@ -11,6 +11,8 @@ namespace CaptainData
 
         public Captain Captain { get; private set; }
 
+        public object ScopeIdentity { get; set; }
+
         private readonly List<RowInstruction> _instructions = new List<RowInstruction>();
 
         public CaptainContext(Captain captain, SchemaInformation schemaInformation)
