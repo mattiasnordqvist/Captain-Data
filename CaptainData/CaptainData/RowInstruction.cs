@@ -41,8 +41,8 @@ namespace CaptainData
             var v = nonEmptyColumnInstructions.ToDictionary(x => x.Key, x => x.Value.Value).AsEnumerable();
             var values = new DynamicParameters(v);
             sql.AppendLine($"INSERT INTO {_instructionContext.TableName} ({string.Join(", ", nonEmptyColumnInstructions.Keys)}) VALUES ({string.Join(", ", nonEmptyColumnInstructions.Keys.Select(x => $"@{x}"))});");
-            connection.Execute(sql.ToString(), values);
-            _instructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar("SELECT SCOPE_IDENTITY()");
+            sql.AppendLine("SELECT SCOPE_IDENTITY()");
+            _instructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar(sql.ToString(), values);
             foreach (var action in _after)
             {
                 action(connection);

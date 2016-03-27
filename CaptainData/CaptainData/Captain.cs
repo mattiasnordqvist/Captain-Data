@@ -8,7 +8,9 @@ namespace CaptainData
     public class Captain
     {
         private readonly SqlConnection _sqlConnection;
-        private readonly CaptainContext _captainContext;
+
+        public CaptainContext Context { get; }
+
         private readonly List<RuleSet> _rules = new List<RuleSet>(); 
 
         public Captain(SqlConnection sqlConnection, RuleSet customRules = null)
@@ -16,7 +18,7 @@ namespace CaptainData
             _sqlConnection = sqlConnection;
 
             var schemaInformation = SchemaInformation.Create(sqlConnection);
-            _captainContext = new CaptainContext(this, schemaInformation);
+            Context = new CaptainContext(this, schemaInformation);
             AddRules(new OverridesRuleSet());
             if (customRules != null)
             {
@@ -32,7 +34,7 @@ namespace CaptainData
 
         public Captain Insert(string tableName, object overrides = null)
         {
-            var instructionContext = new InstructionContext { TableName = tableName, Overrides = overrides ?? new {}, CaptainContext = _captainContext};
+            var instructionContext = new InstructionContext { TableName = tableName, Overrides = overrides ?? new {}, CaptainContext = Context};
             Insert(instructionContext);
             return this;
         }
@@ -42,13 +44,13 @@ namespace CaptainData
             var instruction = new RowInstruction();
             instruction.SetContext(instructionContext);
             _rules.ForEach(x => x.Apply(instruction, instructionContext));
-            _captainContext.AddInstruction(instruction);
+            Context.AddInstruction(instruction);
             return this;
         }
         public void Go()
         {
-            _captainContext.Apply(_sqlConnection);
-            _captainContext.Clear();
+            Context.Apply(_sqlConnection);
+            Context.Clear();
         }
     }
 }
