@@ -30,7 +30,7 @@ namespace CaptainData
             }
         }
 
-        public void Apply(SqlConnection connection)
+        public void Apply(SqlConnection connection, SqlTransaction transaction)
         {
             foreach (var action in _before)
             {
@@ -42,7 +42,7 @@ namespace CaptainData
             var values = new DynamicParameters(v);
             sql.AppendLine($"INSERT INTO {_instructionContext.TableName} ({string.Join(", ", nonEmptyColumnInstructions.Keys)}) VALUES ({string.Join(", ", nonEmptyColumnInstructions.Keys.Select(x => $"@{x}"))});");
             sql.AppendLine("SELECT SCOPE_IDENTITY()");
-            _instructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar(sql.ToString(), values);
+            _instructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar(sql.ToString(), values, transaction);
             foreach (var action in _after)
             {
                 action(connection);

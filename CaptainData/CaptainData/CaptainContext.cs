@@ -26,9 +26,9 @@ namespace CaptainData
             _instructions.Add(rowInstruction);
         }
 
-        public void Apply(SqlConnection sqlConnection)
+        public void Apply(SqlConnection sqlConnection, SqlTransaction transaction)
         {
-            _instructions.ForEach(x => x.Apply(sqlConnection));
+            _instructions.ForEach(x => x.Apply(sqlConnection, transaction));
         }
 
         public void Clear()

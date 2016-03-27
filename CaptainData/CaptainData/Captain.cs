@@ -9,13 +9,16 @@ namespace CaptainData
     {
         private readonly SqlConnection _sqlConnection;
 
+        private readonly SqlTransaction _transaction;
+
         public CaptainContext Context { get; }
 
         private readonly List<RuleSet> _rules = new List<RuleSet>(); 
 
-        public Captain(SqlConnection sqlConnection, RuleSet customRules = null)
+        public Captain(SqlConnection sqlConnection, RuleSet customRules = null, SqlTransaction transaction = null)
         {
             _sqlConnection = sqlConnection;
+            _transaction = transaction;
 
             var schemaInformation = SchemaInformation.Create(sqlConnection);
             Context = new CaptainContext(this, schemaInformation);
@@ -49,7 +52,7 @@ namespace CaptainData
         }
         public void Go()
         {
-            Context.Apply(_sqlConnection);
+            Context.Apply(_sqlConnection, _transaction);
             Context.Clear();
         }
     }
