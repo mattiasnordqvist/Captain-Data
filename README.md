@@ -1,11 +1,99 @@
 # Captain-Data
-I'm sick of generating database data for integrations tests by hand. Most data I don't even care about but it is enforced by the schema. Let's create some sensible convention based tool for auto-generating data.
+I'm sick of generating database data for integrations tests by hand. Most data I don't even care about but it is enforced by the schema. Let's create some sensible convention based tool for auto-generating sql server data.
 
-## Idea
-Sometimes I have to set up a database with some data to do some testing, because thanks to IQueryable and stuff, a lot of business is going on in the database. So my tests are littered with fakes and setups and fixtures and stuff to basically do stuff like `INSERT INTO Todo (Name, Due) VALUES ('blabla', '2017-01-01')`. In this example. suppose all I want to do is to see that my Todo-items-count is correct. I don't really care what the name or the due date of the Todo is. I just need a bunch of Todos. However, my db-schema says these columns are `NOT NULL`, so they have to be provided. This creates extra work, right?
+## Examples
 
-I'm thinking that we, in runtime, could look at what the database schema look like, and create sensible defaults for values in most columns that I don't really care about. If I could just say `Enumerable.Range(1,10).ForEach(x => Captain.Insert("Todo"))`, that would be nice wouldn't it? This could insert `''` in non-nullable string columns, and maybe `GETDATE()` in non-nullable datetime columns.
+Insert a row into a table:
 
-We could let the user override defaults I think as well, by providing functions somehow. Let's say I want to test that sorting of the Todos works. Then `GETDATE()` as `Due` is not good enough for me. How about something like  `Enumerable.Range(1,10).ForEach(x => Captain.Insert("Todo", y => y.Value = (y.Name == "Due" ? new DateTime(2015, 1, x) : y.Value)))`. Syntactic sugar for this could be  `Enumerable.Range(1,10).ForEach(x => Captain.Insert("Todo", new Override { Name = "Due", Value = new DateTime(2015, 1, x) })` maybe.
+```csharp
+var captain = new Captain(anOpenConnection);
+captain.Insert("Person").Go();
+```
 
-If we could make up some good defaults for simple foreign key constraints as well, that will create rows in other tables if needed, this would become super powerful, I think.
+Captain Data will work out default for all columns of the table Person and insert a row into that table.
+
+Captain Data is still in some kind of alpha, so defaults for every possible type of column is not implemented yet.
+However, since there is a possibility to override any inserted column data, you can always work around this.
+
+```csharp
+var captain = new Captain(anOpenConnection);
+captain.Insert("Person", new { Name = "Captain Data"}).Go();
+```
+
+Oh, want to know the Id of your newly inserted row (provided its table has an identity column)?
+
+```csharp
+var id = captain.Context.ScopeIdentity;
+```
+
+You can also provide your own defaults in a fashion that will apply to all inserts created by the same Captain.
+
+```csharp
+var captain = new Captain(anOpenConnection, new MyRules());
+```
+
+MyRules should inherit from RuleSet. Instead of explaining exactly how it works right now (because it is in the middle of the night), I'll 
+just provide some examples. There is a standard implementation of RuleSet, called BasicRuleSet. Begin by inheriting it and create a constructor.
+
+```csharp
+public class MyRules : BasicRuleSet
+{
+	public MyRules 
+	{
+	}
+}
+``` 
+
+In this constructor you can add Rules. Rules must implement IRule. Let's say you want to make sure Captain Data inserts '10' in all integer columns. Define a rule for that:
+
+```csharp
+public class IntegersRule : SingleColumnValueRule
+{
+	public override bool Match(ColumnSchema column, InstructionContext instructionContext)
+	{
+		return column.DataType == SqlDataType.Int;
+	}
+	public override object Value(ColumnSchema column, InstructionContext instructionContext)
+	{
+		return 10;
+	}
+} 
+```
+
+(SingleColumnValueRule is an abstract implementation of IRule)
+
+Then, add this rule to MyRules
+```csharp
+public class MyRules : BasicRuleSet
+{
+	public MyRules 
+	{
+       AddRule(new IntegersRule());
+	}
+}
+``` 
+
+In order to resolve the value to be inserted into a column, three steps are taken.
+1. See if there is a specified override in the insert statement, if not go on to step 2.
+2. Apply custom rules (like IntegersRule). If the column still has no value, go to step 3.
+3. Apply Captain Data defaults
+
+One of the default rules of Captain Data is to not insert anything on an IDENTITY-column. Sometimes, in testing, to make things deterministic, you want to override the default IDENTITY-behaviour. In SQL Server, you can temporarily turn off IDENTITY INSERT. 
+Captain data comes with a rule that can handle this for you.
+
+```csharp
+public class MyRules : BasicRuleSet
+{
+	public MyRules 
+	{
+       AddRule(new AllowIdentityInsertRule());
+	}
+}
+``` 
+
+And now you can do this without any exceptions:
+
+```csharp
+var captain = new Captain(anOpenConnection);
+captain.Insert("Person", new { Id = 1 }).Go();
+```
