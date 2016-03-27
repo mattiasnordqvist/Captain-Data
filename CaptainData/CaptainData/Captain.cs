@@ -20,7 +20,7 @@ namespace CaptainData
             _sqlConnection = sqlConnection;
             _transaction = transaction;
 
-            var schemaInformation = SchemaInformation.Create(sqlConnection);
+            var schemaInformation = SchemaInformation.Create(sqlConnection, transaction);
             Context = new CaptainContext(this, schemaInformation);
             AddRules(new OverridesRuleSet());
             if (customRules != null)

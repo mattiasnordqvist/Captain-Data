@@ -13,7 +13,7 @@ namespace CaptainData.Schema
             AddRange(columns);
         }
 
-        public static SchemaInformation Create(SqlConnection connection)
+        public static SchemaInformation Create(SqlConnection connection, SqlTransaction transaction)
         {
             var columns = connection.Query<ColumnSchema>(@"
                 select 
@@ -24,7 +24,7 @@ namespace CaptainData.Schema
 	                COLUMNPROPERTY(object_id(TABLE_SCHEMA +'.'+TABLE_NAME), COLUMN_NAME, 'IsIdentity') AS IsIdentity,
 	                *
                 from INFORMATION_SCHEMA.COLUMNS
-            ").ToList();
+            ", transaction: transaction).ToList();
             return new SchemaInformation(columns);
         }
 
