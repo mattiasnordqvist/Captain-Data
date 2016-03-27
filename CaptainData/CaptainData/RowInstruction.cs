@@ -37,24 +37,16 @@ namespace CaptainData
                 action(connection);
             }
             var sql = new StringBuilder();
-            var columnValues = _columnInstructions.Where(x => x.Key != null).ToDictionary(x => x.Key, x => x.Value);
-            sql.AppendLine($"INSERT INTO {_instructionContext.TableName} ({string.Join(", ", columnValues.Keys)}) VALUES ({string.Join(", ", columnValues.Values.Select(x => ToSqlValue(x.Value)))});");
-            connection.Execute(sql.ToString());
+            var nonEmptyColumnInstructions = _columnInstructions.Where(x => x.Key != null).ToDictionary(x => x.Key, x => x.Value);
+            var v = nonEmptyColumnInstructions.ToDictionary(x => x.Key, x => x.Value.Value).AsEnumerable();
+            var values = new DynamicParameters(v);
+            sql.AppendLine($"INSERT INTO {_instructionContext.TableName} ({string.Join(", ", nonEmptyColumnInstructions.Keys)}) VALUES ({string.Join(", ", nonEmptyColumnInstructions.Keys.Select(x => $"@{x}"))});");
+            connection.Execute(sql.ToString(), values);
             _instructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar("SELECT SCOPE_IDENTITY()");
             foreach (var action in _after)
             {
                 action(connection);
             }
-        }
-
-        private object ToSqlValue(object o)
-        {
-            if (o.GetType() == typeof(string))
-            {
-                return "'" + o + "'";
-            }
-
-            return o.ToString();
         }
 
         public bool IsDefinedFor(string columnName) => _columnInstructions.ContainsKey(columnName);
