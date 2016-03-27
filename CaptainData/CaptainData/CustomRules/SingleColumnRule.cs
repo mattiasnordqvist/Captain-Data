@@ -1,6 +1,6 @@
 using CaptainData.Schema;
 
-namespace CaptainData
+namespace CaptainData.CustomRules
 {
     public abstract class SingleColumnRule : IRule
     {

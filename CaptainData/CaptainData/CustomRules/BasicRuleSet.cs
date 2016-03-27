@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CaptainData
+namespace CaptainData.CustomRules
 {
     public class BasicRuleSet : RuleSet
     {
