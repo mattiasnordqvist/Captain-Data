@@ -73,10 +73,10 @@ public class MyRules : BasicRuleSet
 }
 ``` 
 
-In order to resolve the value to be inserted into a column, three steps are taken.
-1. See if there is a specified override in the insert statement, if not go on to step 2.
-2. Apply custom rules (like IntegersRule). If the column still has no value, go to step 3.
-3. Apply Captain Data defaults
+In order to resolve the value to be inserted into a column, three steps are taken.  
+1. See if there is a specified override in the insert statement, if not go on to step 2.  
+2. Apply custom rules (like IntegersRule). If the column still has no value, go to step 3.  
+3. Apply Captain Data defaults  
 
 One of the default rules of Captain Data is to not insert anything on an IDENTITY-column. Sometimes, in testing, to make things deterministic, you want to override the default IDENTITY-behaviour. In SQL Server, you can temporarily turn off IDENTITY INSERT. 
 Captain data comes with a rule that can handle this for you.
