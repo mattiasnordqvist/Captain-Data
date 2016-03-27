@@ -35,10 +35,22 @@ namespace CaptainData
                 switch (column.DataType)
                 {
                     case SqlDataType.Int:
+                    case SqlDataType.BigInt:
+                    case SqlDataType.Decimal:
                         rowInstruction[column.ColumnName] = 0;
                         break;
                     case SqlDataType.Nvarchar:
+                    case SqlDataType.Varchar:
                         rowInstruction[column.ColumnName] = string.Empty;
+                        break;
+                    case SqlDataType.Bit:
+                        rowInstruction[column.ColumnName] = false;
+                        break;
+                    case SqlDataType.Datetime:
+                        rowInstruction[column.ColumnName] = new DateTime();
+                        break;
+                    case SqlDataType.Varbinary:
+                        rowInstruction[column.ColumnName] = new byte[0];
                         break;
                     case SqlDataType.Unknown:
                         throw new ArgumentException();
