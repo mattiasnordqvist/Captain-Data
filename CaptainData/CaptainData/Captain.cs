@@ -13,9 +13,17 @@ namespace CaptainData
 
         public CaptainContext Context { get; }
 
-        private readonly List<RuleSet> _rules = new List<RuleSet>(); 
+        private readonly List<RuleSet> _rules = new List<RuleSet>();
 
-        public Captain(IDbConnection connection, RuleSet customRules = null, IDbTransaction transaction = null)
+        public Captain(IDbTransaction transaction, RuleSet customRules = null) : this(transaction.Connection, transaction, customRules)
+        {
+        }
+
+        public Captain(IDbConnection connection, RuleSet customRules = null) : this(connection, null, customRules)
+        {
+        }
+
+        private Captain(IDbConnection connection, IDbTransaction transaction = null, RuleSet customRules = null)
         {
             _connection = connection;
             _transaction = transaction;
