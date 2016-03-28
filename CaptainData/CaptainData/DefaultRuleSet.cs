@@ -47,7 +47,7 @@ namespace CaptainData
                         rowInstruction[column.ColumnName] = false;
                         break;
                     case SqlDataType.Datetime:
-                        rowInstruction[column.ColumnName] = new DateTime();
+                        rowInstruction[column.ColumnName] = new DateTime(1753, 1, 1, 12, 0, 0);
                         break;
                     case SqlDataType.Varbinary:
                         rowInstruction[column.ColumnName] = new byte[0];
