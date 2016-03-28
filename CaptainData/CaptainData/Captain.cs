@@ -7,29 +7,15 @@ namespace CaptainData
 {
     public class Captain
     {
-        private readonly IDbConnection _connection;
-
-        private readonly IDbTransaction _transaction;
-
         public CaptainContext Context { get; }
 
+        public List<RuleSet> Rules => _rules;
+
         private readonly List<RuleSet> _rules = new List<RuleSet>();
-
-        public Captain(IDbTransaction transaction, RuleSet customRules = null) : this(transaction.Connection, transaction, customRules)
+        public Captain(RuleSet customRules = null)
         {
-        }
 
-        public Captain(IDbConnection connection, RuleSet customRules = null) : this(connection, null, customRules)
-        {
-        }
-
-        private Captain(IDbConnection connection, IDbTransaction transaction = null, RuleSet customRules = null)
-        {
-            _connection = connection;
-            _transaction = transaction;
-
-            var schemaInformation = SchemaInformation.Create(connection, transaction);
-            Context = new CaptainContext(this, schemaInformation);
+            Context = new CaptainContext(this);
             AddRules(new OverridesRuleSet());
             if (customRules != null)
             {
@@ -46,22 +32,22 @@ namespace CaptainData
         public Captain Insert(string tableName, object overrides = null)
         {
             var instructionContext = new InstructionContext { TableName = tableName, Overrides = overrides ?? new {}, CaptainContext = Context};
-            Insert(instructionContext);
+            Context.AddInstructionContext(instructionContext);
             return this;
         }
 
-        public Captain Insert(InstructionContext instructionContext)
+        
+
+        public Captain Go(IDbTransaction transaction)
         {
-            var instruction = new RowInstruction();
-            instruction.SetContext(instructionContext);
-            _rules.ForEach(x => x.Apply(instruction, instructionContext));
-            Context.AddInstruction(instruction);
-            return this;
+            return Go(transaction.Connection, transaction);
         }
-        public void Go()
+
+        public Captain Go(IDbConnection connection, IDbTransaction transaction = null)
         {
-            Context.Apply(_connection, _transaction);
-            Context.Clear();
+            Context.Apply(connection, transaction);
+            Context.ClearInstructions();
+            return this;
         }
     }
 }
