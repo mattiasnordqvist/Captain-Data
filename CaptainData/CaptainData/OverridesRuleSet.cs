@@ -4,7 +4,6 @@ namespace CaptainData
 {
     public class OverridesRuleSet : RuleSet
     {
-
         public override void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
         {
             var overrides = instructionContext.Overrides;
