@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 
 using Dapper;
 
@@ -14,12 +13,21 @@ namespace CaptainData
 
         private InstructionContext _instructionContext;
 
-        private readonly List<Action<IDbConnection, IDbTransaction>> _after = new List<Action<IDbConnection, IDbTransaction>>();
-        private readonly List<Action<IDbConnection, IDbTransaction>> _before = new List<Action<IDbConnection, IDbTransaction>>();
+        internal readonly List<Action<IDbConnection, IDbTransaction>> After = new List<Action<IDbConnection, IDbTransaction>>();
+
+        internal readonly List<Action<IDbConnection, IDbTransaction>> Before = new List<Action<IDbConnection, IDbTransaction>>();
 
         public void SetContext(InstructionContext instructionContext)
         {
             _instructionContext = instructionContext;
+        }
+
+        internal IDictionary<string, ColumnInstruction> NonEmptyColumnInstructions
+        {
+            get
+            {
+                return _columnInstructions.Where(x => x.Key != null).ToDictionary(x => x.Key, x => x.Value);
+            }
         }
 
         public object this[string index]
@@ -30,24 +38,9 @@ namespace CaptainData
             }
         }
 
-        public void Apply(IDbConnection connection, IDbTransaction transaction)
-        {
-            foreach (var action in _before)
-            {
-                action(connection, transaction);
-            }
-            var sql = new StringBuilder();
-            var nonEmptyColumnInstructions = _columnInstructions.Where(x => x.Key != null).ToDictionary(x => x.Key, x => x.Value);
-            var v = nonEmptyColumnInstructions.ToDictionary(x => x.Key, x => x.Value.Value).AsEnumerable();
-            var values = new DynamicParameters(v);
-            sql.AppendLine($"INSERT INTO {_instructionContext.TableName} ({string.Join(", ", nonEmptyColumnInstructions.Keys)}) VALUES ({string.Join(", ", nonEmptyColumnInstructions.Keys.Select(x => $"@{x}"))});");
-            sql.AppendLine("SELECT SCOPE_IDENTITY()");
-            _instructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar(sql.ToString(), values, transaction);
-            foreach (var action in _after)
-            {
-                action(connection, transaction);
-            }
-        }
+        internal Dictionary<string, ColumnInstruction> ColumnInstructions => _columnInstructions;
+
+        internal InstructionContext InstructionContext => _instructionContext;
 
         public bool IsDefinedFor(string columnName) => _columnInstructions.ContainsKey(columnName);
 
@@ -63,12 +56,12 @@ namespace CaptainData
 
         public void AddBefore(Action<IDbConnection, IDbTransaction> before)
         {
-            _before.Add(before);
+            Before.Add(before);
         }
 
         public void AddAfter(Action<IDbConnection, IDbTransaction> after)
         {
-            _after.Insert(0, after);
+            After.Insert(0, after);
         }
     }
 }
