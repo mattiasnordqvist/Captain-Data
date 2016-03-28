@@ -40,6 +40,7 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColumnInstruction.cs" />
     <Compile Include="CustomRules\PreDefined\AllowIdentityInsertRule.cs" />
     <Compile Include="CustomRules\SingleColumnRule.cs" />
     <Compile Include="CustomRules\SingleColumnValueRule.cs" />

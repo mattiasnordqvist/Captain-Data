@@ -71,9 +71,4 @@ namespace CaptainData
             _after.Insert(0, after);
         }
     }
-
-    public class ColumnInstruction
-    {
-        public object Value { get; set; }
-    }
 }

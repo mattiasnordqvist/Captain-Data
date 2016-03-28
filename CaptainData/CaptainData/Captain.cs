@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 
-using CaptainData.Schema;
-
 namespace CaptainData
 {
     public class Captain
     {
         public CaptainContext Context { get; }
 
-        public List<RuleSet> Rules => _rules;
+        internal List<RuleSet> Rules => _rules;
 
         private readonly List<RuleSet> _rules = new List<RuleSet>();
         public Captain(RuleSet customRules = null)
@@ -21,6 +19,7 @@ namespace CaptainData
             {
                 AddRules(customRules);
             }
+
             AddRules(new DefaultRuleSet());
         }
 

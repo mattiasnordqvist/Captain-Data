@@ -30,7 +30,7 @@ namespace CaptainData
             var instruction = new RowInstruction();
             instruction.SetContext(instructionContext);
             Captain.Rules.ForEach(x => x.Apply(instruction, instructionContext));
-            this.AddInstruction(instruction);
+            AddInstruction(instruction);
         }
 
         public void Apply(IDbConnection connection, IDbTransaction transaction)
@@ -41,7 +41,6 @@ namespace CaptainData
             }
 
             _instructionContexts.ForEach(Insert);
-
             _instructions.ForEach(x => x.Apply(connection, transaction));
         }
 
@@ -51,9 +50,9 @@ namespace CaptainData
             _instructionContexts.Clear();
         }
 
-        private List<InstructionContext> _instructionContexts = new List<InstructionContext>(); 
+        private readonly List<InstructionContext> _instructionContexts = new List<InstructionContext>(); 
 
-        public void AddInstructionContext(InstructionContext instructionContext)
+        internal void AddInstructionContext(InstructionContext instructionContext)
         {
             _instructionContexts.Add(instructionContext);
         }
