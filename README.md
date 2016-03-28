@@ -6,8 +6,8 @@ I'm sick of generating database data for integrations tests by hand. Most data I
 Insert a row into a table:
 
 ```csharp
-var captain = new Captain(anOpenConnection);
-captain.Insert("Person").Go();
+var captain = new Captain();
+captain.Insert("Person").Go(anOpenConnection);
 ```
 
 Captain Data will work out default for all columns of the table Person and insert a row into that table.
@@ -16,8 +16,8 @@ Captain Data is still in some kind of alpha, so defaults for every possible type
 However, since there is a possibility to override any inserted column data, you can always work around this.
 
 ```csharp
-var captain = new Captain(anOpenConnection);
-captain.Insert("Person", new { Name = "Captain Data"}).Go();
+var captain = new Captain();
+captain.Insert("Person", new { Name = "Captain Data"}).Go(anOpenConnection);
 ```
 
 Oh, want to know the Id of your newly inserted row (provided its table has an identity column)?
@@ -29,7 +29,7 @@ var id = captain.Context.ScopeIdentity;
 You can also provide your own defaults in a fashion that will apply to all inserts created by the same Captain.
 
 ```csharp
-var captain = new Captain(anOpenConnection, new MyRules());
+var captain = new Captain(new MyRules());
 ```
 
 MyRules should inherit from RuleSet. Instead of explaining exactly how it works right now (because it is in the middle of the night), I'll 
@@ -68,7 +68,7 @@ public class MyRules : BasicRuleSet
 {
 	public MyRules 
 	{
-       AddRule(new IntegersRule());
+		AddRule(new IntegersRule());
 	}
 }
 ``` 
@@ -86,7 +86,7 @@ public class MyRules : BasicRuleSet
 {
 	public MyRules 
 	{
-       AddRule(new AllowIdentityInsertRule());
+       		AddRule(new AllowIdentityInsertRule());
 	}
 }
 ``` 
@@ -94,6 +94,6 @@ public class MyRules : BasicRuleSet
 And now you can do this without any exceptions:
 
 ```csharp
-var captain = new Captain(anOpenConnection);
-captain.Insert("Person", new { Id = 1 }).Go();
+var captain = new Captain();
+captain.Insert("Person", new { Id = 1 }).Go(anOpenConnection);
 ```
