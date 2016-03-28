@@ -6,6 +6,8 @@
 
         public string TableName { get; set; }
 
+        public string TableSchema { get; set; }
+
         public bool IsNullable { get; set; }
 
         public SqlDataType DataType { get; set; }
