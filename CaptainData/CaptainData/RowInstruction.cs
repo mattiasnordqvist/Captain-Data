@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Text;
 
@@ -14,8 +14,8 @@ namespace CaptainData
 
         private InstructionContext _instructionContext;
 
-        private readonly List<Action<SqlConnection>> _after = new List<Action<SqlConnection>>();
-        private readonly List<Action<SqlConnection>> _before = new List<Action<SqlConnection>>();
+        private readonly List<Action<IDbConnection, IDbTransaction>> _after = new List<Action<IDbConnection, IDbTransaction>>();
+        private readonly List<Action<IDbConnection, IDbTransaction>> _before = new List<Action<IDbConnection, IDbTransaction>>();
 
         public void SetContext(InstructionContext instructionContext)
         {
@@ -30,11 +30,11 @@ namespace CaptainData
             }
         }
 
-        public void Apply(SqlConnection connection, SqlTransaction transaction)
+        public void Apply(IDbConnection connection, IDbTransaction transaction)
         {
             foreach (var action in _before)
             {
-                action(connection);
+                action(connection, transaction);
             }
             var sql = new StringBuilder();
             var nonEmptyColumnInstructions = _columnInstructions.Where(x => x.Key != null).ToDictionary(x => x.Key, x => x.Value);
@@ -45,7 +45,7 @@ namespace CaptainData
             _instructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar(sql.ToString(), values, transaction);
             foreach (var action in _after)
             {
-                action(connection);
+                action(connection, transaction);
             }
         }
 
@@ -53,20 +53,20 @@ namespace CaptainData
 
         public void AddBefore(string before)
         {
-            AddBefore(c => c.Execute(before));
+            AddBefore((c, t) => c.Execute(before, transaction: t));
         }
 
         public void AddAfter(string after)
         {
-            AddAfter(x => x.Execute(after));
+            AddAfter((c, t) => c.Execute(after, transaction: t));
         }
 
-        public void AddBefore(Action<SqlConnection> before)
+        public void AddBefore(Action<IDbConnection, IDbTransaction> before)
         {
             _before.Add(before);
         }
 
-        public void AddAfter(Action<SqlConnection> after)
+        public void AddAfter(Action<IDbConnection, IDbTransaction> after)
         {
             _after.Insert(0, after);
         }

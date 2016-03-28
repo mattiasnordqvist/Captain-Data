@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 
 using CaptainData.Schema;
 
@@ -7,20 +7,20 @@ namespace CaptainData
 {
     public class Captain
     {
-        private readonly SqlConnection _sqlConnection;
+        private readonly IDbConnection _connection;
 
-        private readonly SqlTransaction _transaction;
+        private readonly IDbTransaction _transaction;
 
         public CaptainContext Context { get; }
 
         private readonly List<RuleSet> _rules = new List<RuleSet>(); 
 
-        public Captain(SqlConnection sqlConnection, RuleSet customRules = null, SqlTransaction transaction = null)
+        public Captain(IDbConnection connection, RuleSet customRules = null, IDbTransaction transaction = null)
         {
-            _sqlConnection = sqlConnection;
+            _connection = connection;
             _transaction = transaction;
 
-            var schemaInformation = SchemaInformation.Create(sqlConnection, transaction);
+            var schemaInformation = SchemaInformation.Create(connection, transaction);
             Context = new CaptainContext(this, schemaInformation);
             AddRules(new OverridesRuleSet());
             if (customRules != null)
@@ -52,7 +52,7 @@ namespace CaptainData
         }
         public void Go()
         {
-            Context.Apply(_sqlConnection, _transaction);
+            Context.Apply(_connection, _transaction);
             Context.Clear();
         }
     }

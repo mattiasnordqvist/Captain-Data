@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -13,7 +14,7 @@ namespace CaptainData.Schema
             AddRange(columns);
         }
 
-        public static SchemaInformation Create(SqlConnection connection, SqlTransaction transaction)
+        public static SchemaInformation Create(IDbConnection connection, IDbTransaction transaction)
         {
             var columns = connection.Query<ColumnSchema>(@"
                 select 

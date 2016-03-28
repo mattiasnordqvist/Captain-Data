@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 
 using CaptainData.Schema;
@@ -26,7 +27,7 @@ namespace CaptainData
             _instructions.Add(rowInstruction);
         }
 
-        public void Apply(SqlConnection sqlConnection, SqlTransaction transaction)
+        public void Apply(IDbConnection sqlConnection, IDbTransaction transaction)
         {
             _instructions.ForEach(x => x.Apply(sqlConnection, transaction));
         }
