@@ -62,12 +62,12 @@ namespace CaptainData
             return this;
         }
 
-        protected string CreateInsertStatement(RowInstruction rowInstruction)
+        protected virtual string CreateInsertStatement(RowInstruction rowInstruction)
         {
             return $"INSERT INTO {rowInstruction.InstructionContext.TableName} ({string.Join(", ", rowInstruction.ColumnInstructions.Keys)}) VALUES ({string.Join(", ", rowInstruction.ColumnInstructions.Keys.Select(x => $"@{x}"))});";
         }
 
-        protected string CreateGetScopeIdentityQuery(RowInstruction rowInstruction)
+        protected virtual string CreateGetScopeIdentityQuery(RowInstruction rowInstruction)
         {
             return "SELECT SCOPE_IDENTITY();";
         }
