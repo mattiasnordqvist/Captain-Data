@@ -38,9 +38,9 @@ namespace CaptainData
             }
         }
 
-        internal Dictionary<string, ColumnInstruction> ColumnInstructions => _columnInstructions;
+        public Dictionary<string, ColumnInstruction> ColumnInstructions => _columnInstructions;
 
-        internal InstructionContext InstructionContext => _instructionContext;
+        public InstructionContext InstructionContext => _instructionContext;
 
         public bool IsDefinedFor(string columnName) => _columnInstructions.ContainsKey(columnName);
 
