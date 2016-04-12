@@ -35,6 +35,7 @@ namespace CaptainData
                 switch (column.DataType)
                 {
                     case SqlDataType.Int:
+                    case SqlDataType.SmallInt:
                     case SqlDataType.BigInt:
                     case SqlDataType.Decimal:
                         rowInstruction[column.ColumnName] = 0;
