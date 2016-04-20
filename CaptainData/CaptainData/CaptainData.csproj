@@ -55,9 +55,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schema\SchemaInformation.cs" />
     <Compile Include="Schema\ColumnSchema.cs" />
-    <Compile Include="Schema\SqlDataType.cs" />
     <Compile Include="Schema\TableColumnList.cs" />
     <Compile Include="CustomRules\BasicRuleSet.cs" />
+    <Compile Include="TypeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 using CaptainData.Schema;
 
@@ -28,33 +29,31 @@ namespace CaptainData
 
             if (column.IsNullable)
             {
-                rowInstruction[column.ColumnName] = null;
+                rowInstruction[column.ColumnName] = new ColumnInstruction(null) {DbType = TypeConverter.ToDbType(column.DataType)};
             }
             else
             {
                 switch (column.DataType)
                 {
-                    case SqlDataType.Int:
-                    case SqlDataType.SmallInt:
-                    case SqlDataType.BigInt:
-                    case SqlDataType.Decimal:
+                    case SqlDbType.Int:
+                    case SqlDbType.SmallInt:
+                    case SqlDbType.BigInt:
+                    case SqlDbType.Decimal:
                         rowInstruction[column.ColumnName] = 0;
                         break;
-                    case SqlDataType.Nvarchar:
-                    case SqlDataType.Varchar:
+                    case SqlDbType.NVarChar:
+                    case SqlDbType.VarChar:
                         rowInstruction[column.ColumnName] = string.Empty;
                         break;
-                    case SqlDataType.Bit:
+                    case SqlDbType.Bit:
                         rowInstruction[column.ColumnName] = false;
                         break;
-                    case SqlDataType.Datetime:
+                    case SqlDbType.DateTime:
                         rowInstruction[column.ColumnName] = new DateTime(1753, 1, 1, 12, 0, 0);
                         break;
-                    case SqlDataType.Varbinary:
+                    case SqlDbType.VarBinary:
                         rowInstruction[column.ColumnName] = new byte[0];
                         break;
-                    case SqlDataType.Unknown:
-                        throw new ArgumentException();
                     default:
                         throw new NotImplementedException();
                 }

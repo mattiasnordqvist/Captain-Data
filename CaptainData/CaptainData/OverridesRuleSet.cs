@@ -8,7 +8,7 @@ namespace CaptainData
         {
             var overrides = instructionContext.Overrides;
 
-            var overridesDictionary = overrides?.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(overrides, null));
+            var overridesDictionary = overrides?.GetType().GetProperties().ToDictionary(x => x.Name, x => new ColumnInstruction(x.GetValue(overrides, null)));
 
             var columns = instructionContext.CaptainContext.SchemaInformation[instructionContext.TableName];
             foreach (var column in columns)

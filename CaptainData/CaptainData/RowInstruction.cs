@@ -30,11 +30,11 @@ namespace CaptainData
             }
         }
 
-        public object this[string index]
+        public ColumnInstruction this[string index]
         {
             set
             {
-                _columnInstructions[index] = new ColumnInstruction { Value = value };
+                _columnInstructions[index] = value;
             }
         }
 

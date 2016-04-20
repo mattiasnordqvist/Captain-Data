@@ -80,7 +80,11 @@ namespace CaptainData
             }
 
             var sql = new StringBuilder();
-            var values = new DynamicParameters(rowInstruction.ColumnInstructions.ToDictionary(x => x.Key, x => x.Value.Value).AsEnumerable());
+            var values = new DynamicParameters();
+            foreach (var x in rowInstruction.ColumnInstructions)
+            {
+                values.Add(x.Key, x.Value.Value, x.Value.DbType);
+            }
 
             sql.AppendLine(CreateInsertStatement(rowInstruction));
             sql.AppendLine(CreateGetScopeIdentityQuery(rowInstruction));

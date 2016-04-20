@@ -19,6 +19,6 @@ namespace CaptainData.CustomRules
 
         public abstract bool Match(ColumnSchema column, InstructionContext instructionContext);
 
-        public abstract object Value(ColumnSchema column, InstructionContext instructionContext);
+        public abstract ColumnInstruction Value(ColumnSchema column, InstructionContext instructionContext);
     }
 }
