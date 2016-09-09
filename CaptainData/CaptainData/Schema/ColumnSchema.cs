@@ -15,5 +15,7 @@ namespace CaptainData.Schema
         public SqlDbType DataType { get; set; }
 
         public bool IsIdentity { get; set; }
+
+        public bool IsComputed { get; set; }
     }
 }

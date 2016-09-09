@@ -17,14 +17,17 @@ namespace CaptainData.Schema
         {
             var columns = connection.Query<ColumnSchema>(@"
                 select 
-	                COLUMN_NAME As ColumnName,
-	                TABLE_NAME As TableName,
-	                TABLE_SCHEMA As TableSchema,
-	                CASE WHEN IS_NULLABLE = 'NO' THEN 0 ELSE 1 END As IsNullable,
-	                DATA_TYPE As DataType,
-	                COLUMNPROPERTY(object_id(TABLE_SCHEMA +'.'+TABLE_NAME), COLUMN_NAME, 'IsIdentity') AS IsIdentity,
+	                c.name as ColumnName, 
+	                t.name as TableName, 
+	                null as TableSchema, 
+	                c.is_nullable As IsNullable,
+	                y.name as DataType,
+	                c.is_identity as IsIdentity,
+	                c.is_computed as IsComputed,
 	                *
-                from INFORMATION_SCHEMA.COLUMNS
+                from sys.tables t
+                inner join sys.columns c on c.object_id = t.object_id
+                inner join sys.types AS y ON c.user_type_id=y.user_type_id
             ", transaction: transaction).ToList();
             return new SchemaInformation(columns);
         }

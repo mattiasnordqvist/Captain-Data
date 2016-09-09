@@ -22,6 +22,11 @@ namespace CaptainData
 
         private void ApplyDefaults(RowInstruction rowInstruction, ColumnSchema column)
         {
+            if (column.IsComputed)
+            {
+                return;
+            }
+
             if (column.IsIdentity)
             {
                 return;
