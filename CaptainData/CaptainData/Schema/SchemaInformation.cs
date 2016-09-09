@@ -19,7 +19,7 @@ namespace CaptainData.Schema
                 select 
 	                c.name as ColumnName, 
 	                t.name as TableName, 
-	                null as TableSchema, 
+	                s.name as TableSchema, 
 	                c.is_nullable As IsNullable,
 	                y.name as DataType,
 	                c.is_identity as IsIdentity,
@@ -27,7 +27,8 @@ namespace CaptainData.Schema
 	                *
                 from sys.tables t
                 inner join sys.columns c on c.object_id = t.object_id
-                inner join sys.types AS y ON c.user_type_id=y.user_type_id
+                inner join sys.types y ON c.user_type_id = y.user_type_id
+                inner join sys.schemas s ON s.schema_id = t.schema_id
             ", transaction: transaction).ToList();
             return new SchemaInformation(columns);
         }
