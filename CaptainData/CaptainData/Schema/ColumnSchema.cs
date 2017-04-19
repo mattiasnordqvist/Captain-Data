@@ -1,5 +1,4 @@
-﻿using System.Data;
-
+﻿
 namespace CaptainData.Schema
 {
     public class ColumnSchema
@@ -12,7 +11,7 @@ namespace CaptainData.Schema
 
         public bool IsNullable { get; set; }
 
-        public SqlDbType DataType { get; set; }
+        public string DataType { get; set; }
 
         public bool IsIdentity { get; set; }
 

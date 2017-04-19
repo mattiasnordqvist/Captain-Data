@@ -38,29 +38,29 @@ namespace CaptainData
             }
             else
             {
-                switch (column.DataType)
+                switch (column.DataType.ToLower())
                 {
-                    case SqlDbType.Int:
-                    case SqlDbType.SmallInt:
-                    case SqlDbType.BigInt:
-                    case SqlDbType.Decimal:
+                    case "int":
+                    case "smallint":
+                    case "bigint":
+                    case "decimal":
                         rowInstruction[column.ColumnName] = 0;
                         break;
-                    case SqlDbType.NVarChar:
-                    case SqlDbType.VarChar:
+                    case "nvarchar":
+                    case "varchar":
                         rowInstruction[column.ColumnName] = string.Empty;
                         break;
-                    case SqlDbType.Bit:
+                    case "bit":
                         rowInstruction[column.ColumnName] = false;
                         break;
-                    case SqlDbType.DateTime:
+                    case "datetime":
                         rowInstruction[column.ColumnName] = new DateTime(1753, 1, 1, 12, 0, 0);
                         break;
-                    case SqlDbType.VarBinary:
+                    case "varbinary":
                         rowInstruction[column.ColumnName] = new byte[0];
                         break;
                     default:
-                        throw new NotImplementedException();
+                        throw new NotImplementedException($"no default value for type {column.DataType}");
                 }
             }
         }
