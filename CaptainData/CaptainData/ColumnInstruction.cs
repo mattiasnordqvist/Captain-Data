@@ -23,6 +23,14 @@ namespace CaptainData
             };
         }
 
+        public static implicit operator ColumnInstruction(DateTimeOffset value)
+        {
+            return new ColumnInstruction(value)
+            {
+                DbType = System.Data.DbType.DateTimeOffset
+            };
+        }
+
         public static implicit operator ColumnInstruction(bool value)
         {
             return new ColumnInstruction(value)

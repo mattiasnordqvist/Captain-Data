@@ -59,6 +59,9 @@ namespace CaptainData
                     case "varbinary":
                         rowInstruction[column.ColumnName] = new byte[0];
                         break;
+                    case "datetimeoffset":
+                        rowInstruction[column.ColumnName] = new DateTimeOffset(1753, 1, 1, 12, 0 ,0 ,TimeSpan.Zero);
+                        break;
                     default:
                         throw new NotImplementedException($"no default value for type {column.DataType}");
                 }
