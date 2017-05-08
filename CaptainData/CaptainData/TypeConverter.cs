@@ -28,6 +28,7 @@ namespace CaptainData
             DbTypeList.Add(new DbTypeMapEntry(typeof(bool), DbType.Boolean, "bit"));
             DbTypeList.Add(new DbTypeMapEntry(typeof(DateTime), DbType.DateTime, "datetime"));
             DbTypeList.Add(new DbTypeMapEntry(typeof(DateTime), DbType.DateTime2, "datetime2"));
+            DbTypeList.Add(new DbTypeMapEntry(typeof(DateTimeOffset), DbType.DateTimeOffset, "datetimeoffset"));
             DbTypeList.Add(new DbTypeMapEntry(typeof(decimal), DbType.Decimal, "decimal"));
             DbTypeList.Add(new DbTypeMapEntry(typeof(double), DbType.Double, "float"));
             DbTypeList.Add(new DbTypeMapEntry(typeof(Guid), DbType.Guid, "uniqueidentifier"));
