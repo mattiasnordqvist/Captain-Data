@@ -2,7 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using CaptainData.Schema;
 
 using Dapper;
@@ -44,12 +44,12 @@ namespace CaptainData
             AddInstruction(instruction);
         }
 
-        public Captain Go(IDbTransaction transaction)
+        public async Task<Captain> Go(IDbTransaction transaction)
         {
-            return Go(transaction.Connection, transaction);
+            return await Go(transaction.Connection, transaction);
         }
 
-        public Captain Go(IDbConnection connection, IDbTransaction transaction = null)
+        public async Task<Captain> Go(IDbConnection connection, IDbTransaction transaction = null)
         {
             if (Context.SchemaInformation == null)
             {
@@ -57,7 +57,11 @@ namespace CaptainData
             }
 
             _instructionContexts.ForEach(Insert);
-            _instructions.ForEach(x => Apply(connection, transaction, x));
+            foreach (var x in _instructions)
+            {
+                await Apply(connection, transaction, x);
+            }
+
             ClearInstructions();
             return this;
         }
@@ -72,7 +76,7 @@ namespace CaptainData
             return "SELECT SCOPE_IDENTITY();";
         }
 
-        internal void Apply(IDbConnection connection, IDbTransaction transaction, RowInstruction rowInstruction)
+        internal async Task Apply(IDbConnection connection, IDbTransaction transaction, RowInstruction rowInstruction)
         {
             foreach (var action in rowInstruction.Before)
             {
@@ -89,7 +93,7 @@ namespace CaptainData
             sql.AppendLine(CreateInsertStatement(rowInstruction));
             sql.AppendLine(CreateGetScopeIdentityQuery(rowInstruction));
 
-            rowInstruction.InstructionContext.CaptainContext.ScopeIdentity = connection.ExecuteScalar(sql.ToString(), values, transaction);
+            rowInstruction.InstructionContext.CaptainContext.ScopeIdentity = await connection.ExecuteScalarAsync(sql.ToString(), values, transaction);
 
             foreach (var action in rowInstruction.After)
             {
