@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <PackageIconUrl>https://raw.githubusercontent.com/mattiasnordqvist/Captain-Data/master/icon.png</PackageIconUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/mattiasnordqvist/Captain-Data/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mattiasnordqvist/Captain-Data</PackageProjectUrl>
@@ -11,9 +11,14 @@
     <Authors>Mattias Nordqvist</Authors>
     <Title>Captain Data</Title>
     <Description>Let me handle that data</Description>
-    <Version>0.0.23</Version>
+    <Version>0.0.24-rc.1</Version>
     <Product>Captain Data</Product>
     <Company>Mattias Nordqvist</Company>
+    <!-- Custom Envirotainer Stuff - Begin -->
+    <PackageId>Envirotainer.CaptainData</PackageId>
+    <PackageReleaseNotes>Internal version targeting dotnet core. Intended for TEMPORARY use only.</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!-- Custom Envirotainer Stuff - End -->
   </PropertyGroup>
 
   <ItemGroup>
