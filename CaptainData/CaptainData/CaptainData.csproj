@@ -1,75 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D495DFEE-E347-4E35-9712-5F583C5B2966}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CaptainData</RootNamespace>
-    <AssemblyName>CaptainData</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageIconUrl>https://raw.githubusercontent.com/mattiasnordqvist/Captain-Data/master/icon.png</PackageIconUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/mattiasnordqvist/Captain-Data/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/mattiasnordqvist/Captain-Data</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright © Mattias Nordqvist 2016</Copyright>
+    <PackageTags>SQLServer Fixtures</PackageTags>
+    <Authors>Mattias Nordqvist</Authors>
+    <Title>Captain Data</Title>
+    <Description>Let me handle that data</Description>
+    <Version>0.0.23</Version>
+    <Product>Captain Data</Product>
+    <Company>Mattias Nordqvist</Company>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapper.1.50.2\lib\net45\Dapper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <PackageReference Include="Dapper" Version="1.50.4" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ColumnInstruction.cs" />
-    <Compile Include="CustomRules\PreDefined\AllowIdentityInsertRule.cs" />
-    <Compile Include="CustomRules\SingleColumnRule.cs" />
-    <Compile Include="CustomRules\SingleColumnValueRule.cs" />
-    <Compile Include="CustomRules\IRule.cs" />
-    <Compile Include="RuleSet.cs" />
-    <Compile Include="Captain.cs" />
-    <Compile Include="CaptainContext.cs" />
-    <Compile Include="DefaultRuleSet.cs" />
-    <Compile Include="InstructionContext.cs" />
-    <Compile Include="RowInstruction.cs" />
-    <Compile Include="OverridesRuleSet.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Schema\SchemaInformation.cs" />
-    <Compile Include="Schema\ColumnSchema.cs" />
-    <Compile Include="Schema\TableColumnList.cs" />
-    <Compile Include="CustomRules\BasicRuleSet.cs" />
-    <Compile Include="TypeConverter.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
