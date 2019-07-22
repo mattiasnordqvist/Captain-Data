@@ -11,14 +11,9 @@
     <Authors>Mattias Nordqvist</Authors>
     <Title>Captain Data</Title>
     <Description>Let me handle that data</Description>
-    <Version>0.0.24-rc.1</Version>
+    <Version>0.0.23</Version>
     <Product>Captain Data</Product>
     <Company>Mattias Nordqvist</Company>
-    <!-- Custom Envirotainer Stuff - Begin -->
-    <PackageId>Envirotainer.CaptainData</PackageId>
-    <PackageReleaseNotes>Internal version targeting dotnet core. Intended for TEMPORARY use only.</PackageReleaseNotes>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <!-- Custom Envirotainer Stuff - End -->
   </PropertyGroup>
 
   <ItemGroup>

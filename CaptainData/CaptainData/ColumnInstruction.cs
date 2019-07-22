@@ -14,7 +14,7 @@ namespace CaptainData
 
         public DbType? DbType { get; set; }
 
-        internal bool IgnoreColumn { get; private set; }
+        public bool IgnoreColumn { get; private set; }
 
         public static implicit operator ColumnInstruction(DateTime value)
         {
