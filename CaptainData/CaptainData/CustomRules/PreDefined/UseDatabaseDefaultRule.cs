@@ -7,18 +7,7 @@ namespace CaptainData.CustomRules.PreDefined
     /// </summary>
     public class UseDatabaseDefaultRule : SingleColumnRule
     {
-        public enum Mode
-        {
-            ApplyOnlyOnNotNullableDefaultColumns = 0,
-            ApplyOnAllDefaultColumns = 1
-        }
-
-        public UseDatabaseDefaultRule(Mode mode = Mode.ApplyOnlyOnNotNullableDefaultColumns)
-        {
-            ApplicationMode = mode;
-        }
-
-        protected Mode ApplicationMode { get; set; }
+        public bool ApplyOnNullableColumns { get; set; } = false;
 
         public override void Apply(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext)
         {
@@ -32,7 +21,7 @@ namespace CaptainData.CustomRules.PreDefined
                 return false;
             }
 
-            return ApplicationMode == Mode.ApplyOnAllDefaultColumns || !column.IsNullable;
+            return ApplyOnNullableColumns || !column.IsNullable;
         }
     }
 }
