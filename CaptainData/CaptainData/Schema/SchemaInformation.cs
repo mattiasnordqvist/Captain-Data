@@ -24,7 +24,7 @@ namespace CaptainData.Schema
 	                y.name as DataType,
 	                c.is_identity as IsIdentity,
 	                c.is_computed as IsComputed,
-                    IIF(c.default_object_id > 0, 1, 0) as HasDefault,
+	                CASE WHEN c.default_object_id > 0 THEN 1 ELSE 0 END as HasDefault,
 	                *
                 from sys.tables t
                 inner join sys.columns c on c.object_id = t.object_id
