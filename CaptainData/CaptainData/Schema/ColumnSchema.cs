@@ -16,5 +16,7 @@ namespace CaptainData.Schema
         public bool IsIdentity { get; set; }
 
         public bool IsComputed { get; set; }
+
+        public bool HasDefault { get; set; }
     }
 }

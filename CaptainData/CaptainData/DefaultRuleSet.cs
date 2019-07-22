@@ -35,6 +35,7 @@ namespace CaptainData
             {
                 rowInstruction[column.ColumnName] = new ColumnInstruction(null) {DbType = TypeConverter.ToDbType(column.DataType)};
             }
+
             else
             {
                 switch (column.DataType.ToLower())
@@ -62,7 +63,7 @@ namespace CaptainData
                         rowInstruction[column.ColumnName] = new DateTimeOffset(1753, 1, 1, 12, 0 ,0 ,TimeSpan.Zero);
                         break;
                     default:
-                        throw new NotImplementedException($"no default value for type {column.DataType}");
+                        throw new NotImplementedException($"no default value for type {column.DataType} on column {column.TableSchema}.{column.TableName}.{column.ColumnName}");
                 }
             }
         }

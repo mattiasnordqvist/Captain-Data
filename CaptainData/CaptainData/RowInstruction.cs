@@ -42,7 +42,7 @@ namespace CaptainData
 
         public InstructionContext InstructionContext => _instructionContext;
 
-        public bool IsDefinedFor(string columnName) => _columnInstructions.ContainsKey(columnName);
+        public bool IsDefinedFor(string columnName) => _columnInstructions.ContainsKey(columnName) && !_columnInstructions[columnName].IgnoreColumn;
 
         public void AddBefore(string before)
         {
