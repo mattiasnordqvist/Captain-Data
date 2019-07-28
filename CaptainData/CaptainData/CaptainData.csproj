@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <PackageIconUrl>https://raw.githubusercontent.com/mattiasnordqvist/Captain-Data/master/icon.png</PackageIconUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/mattiasnordqvist/Captain-Data/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mattiasnordqvist/Captain-Data</PackageProjectUrl>

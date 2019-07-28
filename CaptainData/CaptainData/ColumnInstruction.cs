@@ -5,7 +5,6 @@ namespace CaptainData
 {
     public class ColumnInstruction
     {
-
         public ColumnInstruction(object value)
         {
             Value = value;
@@ -14,6 +13,8 @@ namespace CaptainData
         public object Value { get; set; }
 
         public DbType? DbType { get; set; }
+
+        public bool IgnoreColumn { get; private set; }
 
         public static implicit operator ColumnInstruction(DateTime value)
         {
@@ -62,6 +63,14 @@ namespace CaptainData
             {
                 DbType = System.Data.DbType.Binary
             };
+        }
+
+        /// <summary>
+        /// Instruct default ruleset to ignore this column
+        /// </summary>
+        public static ColumnInstruction Ignore()
+        {
+            return new ColumnInstruction(null) { IgnoreColumn = true };
         }
     }
 }
