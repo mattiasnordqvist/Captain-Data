@@ -17,6 +17,10 @@ namespace Tests
             var e =  new ExpectedValues();
             return e.Add(name, value);
         }
+        internal static ExpectedValues Empty()
+        {
+            return new ExpectedValues();
+        }
 
         public ExpectedValues Add<T>(string name, T value)
         {

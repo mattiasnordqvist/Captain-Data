@@ -1,4 +1,6 @@
-﻿namespace CaptainData
+﻿using CaptainData.CustomRules;
+
+namespace CaptainData
 {
     public abstract class RuleSet
     {

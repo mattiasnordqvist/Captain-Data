@@ -1,6 +1,6 @@
 ﻿namespace Tests
 {
-    internal class ExpectedSql
+    public class ExpectedSql
     {
         private string sql = "";
 
