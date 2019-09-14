@@ -2,7 +2,6 @@
 using CaptainData.Schema;
 using NUnit.Framework;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Tests
@@ -13,10 +12,8 @@ namespace Tests
         [SetUp]
         public void Setup()
         {
-            captain = CreateCaptain();
             captain.AddRule(new SmartIntIdInsertRule()
-                .EnableForeignKeys((x, t) => (x.ColumnName.IndexOf("_Id") > 0) && t.Contains(x.ColumnName.Substring(0, x.ColumnName.IndexOf("_Id"))),
-                x => x.ColumnName.Substring(0, x.ColumnName.Length - 3)));
+                .EnableForeignKeys(x => x.Matches__Table_Id()));
             captain.AddRule(new AllowIdentityInsertRule());
             captain.SchemaInformationFactory = new FakeSchemaFactory();
         }

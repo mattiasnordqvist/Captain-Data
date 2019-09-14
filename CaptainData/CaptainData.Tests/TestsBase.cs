@@ -16,14 +16,9 @@ namespace Tests
         [SetUp]
         public void BaseSetup()
         {
-            captain = CreateCaptain();
-        }
-
-        protected Captain CreateCaptain()
-        {
-            return new Captain()
+            captain = new Captain()
             {
-                SqlExecutor = sqlExecutor,
+                SqlExecutor = sqlExecutor
             };
         }
 
