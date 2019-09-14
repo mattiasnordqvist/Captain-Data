@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CaptainData.Schema;
 
-namespace CaptainData.CustomRules.PreDefined
+namespace CaptainData.Rules.PreDefined.Identity
 {
     public abstract class SmartIdInsertRule<T> : SingleColumnRule
     {

@@ -1,4 +1,4 @@
-namespace CaptainData.CustomRules
+namespace CaptainData.Rules
 {
     public interface IRule
     {

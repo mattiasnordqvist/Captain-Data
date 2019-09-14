@@ -1,13 +1,13 @@
 ﻿using System;
-
+using CaptainData.Rules;
 using CaptainData.Schema;
 
-namespace CaptainData
+namespace CaptainData.Rules.PreDefined
 {
-    public class DefaultRuleSet : RuleSet
+    public class DefaultRule : IRule
     {
 
-        public override void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
+        public void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
         {
             var columns = instructionContext.CaptainContext.SchemaInformation[instructionContext.TableName];
             foreach (var column in columns)

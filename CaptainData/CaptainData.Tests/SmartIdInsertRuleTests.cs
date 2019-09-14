@@ -1,6 +1,4 @@
-﻿using CaptainData;
-using CaptainData.CustomRules;
-using CaptainData.CustomRules.PreDefined;
+﻿using CaptainData.Rules.PreDefined.Identity;
 using CaptainData.Schema;
 using NUnit.Framework;
 using System.Data;
@@ -11,16 +9,15 @@ namespace Tests
 {
     public class SmartIdInsertRuleTests : TestsBase
     {
-        public SmartIdInsertRuleTests()
-        {
-
-        }
-
+     
         [SetUp]
         public void Setup()
         {
             captain = CreateCaptain();
-            captain.AddRules(new SmartIdInsertTestRules());
+            captain.AddRule(new SmartIntIdInsertRule()
+                .EnableForeignKeys((x, t) => (x.ColumnName.IndexOf("_Id") > 0) && t.Contains(x.ColumnName.Substring(0, x.ColumnName.IndexOf("_Id"))),
+                x => x.ColumnName.Substring(0, x.ColumnName.Length - 3)));
+            captain.AddRule(new AllowIdentityInsertRule());
             captain.SchemaInformationFactory = new FakeSchemaFactory();
         }
 
@@ -89,17 +86,6 @@ namespace Tests
                     new ColumnSchema{TableName = "Person", ColumnName = "Family_Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = false, IsNullable = false, TableSchema = "dbo" },
                 });
             }
-        }
-    }
-
-    internal class SmartIdInsertTestRules : BasicRuleSet
-    {
-        public SmartIdInsertTestRules()
-        {
-            AddRule(new SmartIntIdInsertRule()
-                .EnableForeignKeys((x, t) => (x.ColumnName.IndexOf("_Id") > 0) && t.Contains(x.ColumnName.Substring(0, x.ColumnName.IndexOf("_Id"))),
-                x => x.ColumnName.Substring(0, x.ColumnName.Length - 3)));
-            AddRule(new AllowIdentityInsertRule());
         }
     }
 }

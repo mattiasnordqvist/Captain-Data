@@ -1,10 +1,11 @@
+using CaptainData.Rules;
 using System.Linq;
 
-namespace CaptainData
+namespace CaptainData.Rules.PreDefined
 {
-    public class OverridesRuleSet : RuleSet
+    public class OverridesRule : IRule
     {
-        public override void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
+        public void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
         {
             var overrides = instructionContext.Overrides;
 

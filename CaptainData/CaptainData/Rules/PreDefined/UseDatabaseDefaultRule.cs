@@ -1,6 +1,6 @@
 ﻿using CaptainData.Schema;
 
-namespace CaptainData.CustomRules.PreDefined
+namespace CaptainData.Rules.PreDefined
 {
     /// <summary>
     /// Allows for columns with default specified to get it's default value set by the database

@@ -1,6 +1,6 @@
 ﻿using CaptainData.Schema;
 
-namespace CaptainData.CustomRules.PreDefined
+namespace CaptainData.Rules.PreDefined.Identity
 {
     /// <summary>
     /// This rule will turn on identity insert on identity columns for which there has been a value provided, typically through an override.

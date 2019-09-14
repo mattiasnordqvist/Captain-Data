@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CaptainData.CustomRules.PreDefined
+namespace CaptainData.Rules.PreDefined.Identity
 {
     public class SmartGuidIdInsertRule : SmartIdInsertRule<Guid>
     {

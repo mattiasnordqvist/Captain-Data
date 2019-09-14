@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CaptainData.Rules;
+using CaptainData.Rules.PreDefined;
 using CaptainData.Schema;
 
 using Dapper;
@@ -13,7 +14,7 @@ namespace CaptainData
     {
         public CaptainContext Context { get; }
 
-        private readonly List<RuleSet> _rules = new List<RuleSet>();
+        private readonly List<IRule> _rules = new List<IRule>();
         private readonly List<RowInstruction> _instructions = new List<RowInstruction>();
         private readonly List<InstructionContext> _instructionContexts = new List<InstructionContext>();
 
@@ -21,8 +22,8 @@ namespace CaptainData
         public ISqlExecutor SqlExecutor { get; set; } = new SqlExecutor();
         public ISchemaInformationFactory SchemaInformationFactory { get; set; } = new SchemaInformationFactory();
 
-        public RuleSet DefaultRuleSet { get; set; } = new DefaultRuleSet();
-        public RuleSet OverridesRuleSet { get; set; } = new OverridesRuleSet();
+        public IRule DefaultRuleSet { get; set; } = new DefaultRule();
+        public IRule OverridesRuleSet { get; set; } = new OverridesRule();
 
         public Captain()
         {
@@ -111,9 +112,9 @@ namespace CaptainData
             _instructionContexts.Clear();
         }
 
-        public void AddRules(RuleSet ruleSet)
+        public void AddRule(IRule rule)
         {
-            _rules.Add(ruleSet);
+            _rules.Add(rule);
         }
     }
 }

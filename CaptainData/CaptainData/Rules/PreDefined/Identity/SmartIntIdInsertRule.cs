@@ -1,4 +1,4 @@
-﻿namespace CaptainData.CustomRules.PreDefined
+﻿namespace CaptainData.Rules.PreDefined.Identity
 {
     public class SmartIntIdInsertRule : SmartIdInsertRule<int>
     {
