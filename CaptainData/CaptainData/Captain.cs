@@ -40,9 +40,10 @@ namespace CaptainData
         {
             var instruction = new RowInstruction();
             instruction.SetContext(instructionContext);
-            DefaultRuleSet?.Apply(instruction, instructionContext);
-            _rules.ForEach(x => x.Apply(instruction, instructionContext));
             OverridesRuleSet?.Apply(instruction, instructionContext);
+            _rules.ForEach(x => x.Apply(instruction, instructionContext));
+            DefaultRuleSet?.Apply(instruction, instructionContext);
+
             AddInstruction(instruction);
         }
 
