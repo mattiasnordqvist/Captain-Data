@@ -19,7 +19,8 @@ namespace Tests
         [SetUp]
         public void Setup()
         {
-            captain = CreateCaptain(new SmartIdInsertTestRules());
+            captain = CreateCaptain();
+            captain.AddRules(new SmartIdInsertTestRules());
             captain.SchemaInformationFactory = new FakeSchemaFactory();
         }
 
@@ -33,8 +34,8 @@ namespace Tests
                 .Go(fakeConnection);
 
             // Assert
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope(), ExpectedValues.New("Id",1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id",1).Add("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope(), ExpectedValues.New("Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
         }
 
         [Test]
@@ -96,8 +97,8 @@ namespace Tests
         public SmartIdInsertTestRules()
         {
             AddRule(new SmartIntIdInsertRule()
-                .EnableForeignKeys((x,t) => (x.ColumnName.IndexOf("_Id") > 0) && t.Contains(x.ColumnName.Substring(0,x.ColumnName.IndexOf("_Id"))),
-                x => x.ColumnName.Substring(0, x.ColumnName.Length-3)));
+                .EnableForeignKeys((x, t) => (x.ColumnName.IndexOf("_Id") > 0) && t.Contains(x.ColumnName.Substring(0, x.ColumnName.IndexOf("_Id"))),
+                x => x.ColumnName.Substring(0, x.ColumnName.Length - 3)));
             AddRule(new AllowIdentityInsertRule());
         }
     }

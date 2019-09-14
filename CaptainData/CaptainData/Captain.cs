@@ -21,16 +21,12 @@ namespace CaptainData
         public ISqlExecutor SqlExecutor { get; set; } = new SqlExecutor();
         public ISchemaInformationFactory SchemaInformationFactory { get; set; } = new SchemaInformationFactory();
 
-        public Captain(RuleSet customRules = null)
+        public RuleSet DefaultRuleSet { get; set; } = new DefaultRuleSet();
+        public RuleSet OverridesRuleSet { get; set; } = new OverridesRuleSet();
+
+        public Captain()
         {
             Context = new CaptainContext(this);
-            AddRules(new OverridesRuleSet());
-            if (customRules != null)
-            {
-                AddRules(customRules);
-            }
-
-            AddRules(new DefaultRuleSet());
         }
 
         public Captain Insert(string tableName, object overrides = null)
@@ -44,7 +40,9 @@ namespace CaptainData
         {
             var instruction = new RowInstruction();
             instruction.SetContext(instructionContext);
+            DefaultRuleSet?.Apply(instruction, instructionContext);
             _rules.ForEach(x => x.Apply(instruction, instructionContext));
+            OverridesRuleSet?.Apply(instruction, instructionContext);
             AddInstruction(instruction);
         }
 
@@ -112,7 +110,7 @@ namespace CaptainData
             _instructionContexts.Clear();
         }
 
-        private void AddRules(RuleSet ruleSet)
+        public void AddRules(RuleSet ruleSet)
         {
             _rules.Add(ruleSet);
         }

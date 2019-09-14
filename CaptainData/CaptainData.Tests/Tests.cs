@@ -29,15 +29,6 @@ namespace Tests
 
         }
 
-        private void AssertSql(ExpectedSql expectedSql, Func<DynamicParameters, bool> p)
-        {
-            A.CallTo(() => sqlExecutor.Execute(
-                A<IDbConnection>.Ignored,
-                expectedSql,
-                A<DynamicParameters>.That.Matches(p, "Parameters does not match"),
-                A<IDbTransaction>.Ignored)).MustHaveHappened();
-        }
-
         private class FakeSchemaFactory : ISchemaInformationFactory
         {
             public SchemaInformation Create(IDbConnection connection, IDbTransaction transaction)

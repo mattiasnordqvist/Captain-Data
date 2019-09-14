@@ -3,36 +3,25 @@ using Dapper;
 using FakeItEasy;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Data;
 
 namespace Tests
 {
     public abstract class TestsBase
     {
-        private readonly RuleSet customRules = null;
         protected ISqlExecutor sqlExecutor = A.Fake<ISqlExecutor>();
         protected IDbConnection fakeConnection = A.Fake<IDbConnection>();
         protected Captain captain;
 
-        public TestsBase()
-        {
-
-        }
-        public TestsBase(RuleSet customRules)
-        {
-            this.customRules = customRules;
-        }
-
         [SetUp]
         public void BaseSetup()
         {
-            captain = CreateCaptain(customRules);
+            captain = CreateCaptain();
         }
 
-        protected Captain CreateCaptain(RuleSet customRules)
+        protected Captain CreateCaptain()
         {
-            return new Captain(customRules)
+            return new Captain()
             {
                 SqlExecutor = sqlExecutor,
             };
