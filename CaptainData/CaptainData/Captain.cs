@@ -17,6 +17,10 @@ namespace CaptainData
         private readonly List<RowInstruction> _instructions = new List<RowInstruction>();
         private readonly List<InstructionContext> _instructionContexts = new List<InstructionContext>();
 
+        public ISqlGenerator SqlGenerator { get; set; } = new SqlGenerator();
+        public ISqlExecutor SqlExecutor { get; set; } = new SqlExecutor();
+        public ISchemaInformationFactory SchemaInformationFactory { get; set; } = new SchemaInformationFactory();
+
         public Captain(RuleSet customRules = null)
         {
             Context = new CaptainContext(this);
@@ -53,7 +57,7 @@ namespace CaptainData
         {
             if (Context.SchemaInformation == null)
             {
-                Context.SchemaInformation = SchemaInformation.Create(connection, transaction);
+                Context.SchemaInformation = SchemaInformationFactory.Create(connection, transaction);
             }
 
             _instructionContexts.ForEach(Insert);
@@ -66,16 +70,7 @@ namespace CaptainData
             return this;
         }
 
-        protected virtual string CreateInsertStatement(RowInstruction rowInstruction)
-        {
-            return $"INSERT INTO {rowInstruction.InstructionContext.TableName} ({string.Join(", ", rowInstruction.ColumnInstructions.Keys.Select(x => $"[{x}]"))}) VALUES ({string.Join(", ", rowInstruction.ColumnInstructions.Keys.Select(x => $"@{x}"))});";
-        }
-
-        protected virtual string CreateGetScopeIdentityQuery(RowInstruction rowInstruction)
-        {
-            return "SELECT SCOPE_IDENTITY();";
-        }
-
+        
         internal async Task Apply(IDbConnection connection, IDbTransaction transaction, RowInstruction rowInstruction)
         {
             foreach (var action in rowInstruction.Before)
@@ -90,10 +85,10 @@ namespace CaptainData
                 values.Add(x.Key, x.Value.Value, x.Value.DbType);
             }
 
-            sql.AppendLine(CreateInsertStatement(rowInstruction));
-            sql.AppendLine(CreateGetScopeIdentityQuery(rowInstruction));
+            sql.AppendLine(SqlGenerator.CreateInsertStatement(rowInstruction));
+            sql.AppendLine(SqlGenerator.CreateGetScopeIdentityQuery(rowInstruction));
 
-            rowInstruction.InstructionContext.CaptainContext.ScopeIdentity = await connection.ExecuteScalarAsync(sql.ToString(), values, transaction);
+            rowInstruction.InstructionContext.CaptainContext.ScopeIdentity = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
 
             foreach (var action in rowInstruction.After)
             {
