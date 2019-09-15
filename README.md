@@ -65,6 +65,10 @@ In order to resolve the value to be inserted into a column, three steps are take
 
 ### SmartIdInsertRule
 *needs doc*
+
+## Modify behaviour of defaults and overrides
+*needs doc*
+
 # Migrating from pre v2.0 to v2.0
 * `RuleSet`s are gone. Captain constructor taking `RuleSet`s is gone. Add `IRule`s one by one through `Captain.AddRule` instead.
 * `CaptainContext` now subclasses `Dictionary<string, object>` to suit all your global context needs.
