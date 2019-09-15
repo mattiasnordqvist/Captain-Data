@@ -58,9 +58,7 @@ namespace CaptainData.Rules.PreDefined.Identity
 
         public SmartIdInsertRule<T> EnableForeignKeys(Func<FKDefaults, ISmartIdInsertForeignKeyResolver> foreignKeyResolver)
         {
-            this.foreignKeyResolver = foreignKeyResolver(new FKDefaults());
-            foreignKeysEnabled = true;
-            return this;
+            return EnableForeignKeys(foreignKeyResolver(new FKDefaults()));
         }
 
         public SmartIdInsertRule<T> EnableForeignKeys(ISmartIdInsertForeignKeyResolver foreignKeyResolver)
