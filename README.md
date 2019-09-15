@@ -71,7 +71,10 @@ In order to resolve the value to be inserted into a column, three steps are take
 *needs doc*
 
 # Migrating from pre v2.0 to v2.0
+
+v2.0 focuses on cleaning up the api, removing strange or unnecessary stuff. You might be affected. Hit me up with a GitHub Issue and we can solve it together.
 * `RuleSet`s are gone. Captain constructor taking `RuleSet`s is gone. Add `IRule`s one by one through `Captain.AddRule` instead.
 * `CaptainContext` now subclasses `Dictionary<string, object>` to suit all your global context needs.
 * `IdentityInsertRule` is gone. Identity Insert is now automatically turned on if an identity column has a value set by Captain Data.
-* The `rowInstruction.Before` and `After` has been removed. Do you need them? Hit me up with a GitHub Issue and we can solve it together.
+* The `rowInstruction.Before` and `After` has been removed. Do you really need them? 
+* The `InstructionContext` is gone. All instruction info is now in the `RowInstruction` which now also has a direct reference to the `CaptainContext`
