@@ -1,4 +1,6 @@
-﻿namespace Tests
+﻿using System;
+
+namespace Tests
 {
     public class ExpectedSql
     {
@@ -17,7 +19,7 @@
 
         internal ExpectedSql Add(string sql)
         {
-            this.sql += sql + "\r\n";
+            this.sql += $"{sql}\r\n";
             return this;
         }
 
@@ -30,6 +32,12 @@
         public static implicit operator string(ExpectedSql expectedSql)
         {
             return expectedSql.sql;
+        }
+
+        internal ExpectedSql WithIdentityInsertOn(string table)
+        {
+            sql = $"SET IDENTITY_INSERT {table} ON\r\n{sql}SET IDENTITY_INSERT {table} OFF\r\n";
+            return this;
         }
     }
 }

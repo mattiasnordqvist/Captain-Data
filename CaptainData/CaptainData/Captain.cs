@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CaptainData.Rules;
@@ -73,11 +74,6 @@ namespace CaptainData
         
         internal async Task Apply(IDbConnection connection, IDbTransaction transaction, RowInstruction rowInstruction)
         {
-            foreach (var action in rowInstruction.Before)
-            {
-                action(connection, transaction);
-            }
-
             var sql = new StringBuilder();
             var values = new DynamicParameters();
             foreach (var x in rowInstruction.ColumnInstructions)
@@ -85,15 +81,19 @@ namespace CaptainData
                 values.Add(x.Key, x.Value.Value, x.Value.DbType);
             }
 
+            bool requiresIdentityInsert = rowInstruction.ColumnInstructions.Any(x => rowInstruction.IsDefinedFor(x.Key) && rowInstruction.InstructionContext.CaptainContext.SchemaInformation[rowInstruction.InstructionContext.TableName][x.Key].IsIdentity);
+
+            if (requiresIdentityInsert)
+            {
+                sql.AppendLine($"SET IDENTITY_INSERT {rowInstruction.InstructionContext.TableName} ON");
+            }
             sql.AppendLine(SqlGenerator.CreateInsertStatement(rowInstruction));
             sql.AppendLine(SqlGenerator.CreateGetScopeIdentityQuery(rowInstruction));
-
-            rowInstruction.InstructionContext.CaptainContext.ScopeIdentity = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
-
-            foreach (var action in rowInstruction.After)
+            if (requiresIdentityInsert)
             {
-                action(connection, transaction);
+                sql.AppendLine($"SET IDENTITY_INSERT {rowInstruction.InstructionContext.TableName} OFF");
             }
+            rowInstruction.InstructionContext.CaptainContext.ScopeIdentity = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
         }
 
         internal void AddInstruction(RowInstruction rowInstruction)

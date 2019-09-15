@@ -14,7 +14,6 @@ namespace Tests
         {
             captain.AddRule(new SmartIntIdInsertRule()
                 .EnableForeignKeys(x => x.Matches__Table_Id()));
-            captain.AddRule(new AllowIdentityInsertRule());
             captain.SchemaInformationFactory = new FakeSchemaFactory();
         }
 
@@ -28,8 +27,8 @@ namespace Tests
                 .Go(fakeConnection);
 
             // Assert
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope(), ExpectedValues.New("Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope().WithIdentityInsertOn("Family"), ExpectedValues.New("Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
         }
 
         [Test]
@@ -43,9 +42,9 @@ namespace Tests
                 .Go(fakeConnection);
 
             // Assert
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope(), ExpectedValues.New("Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id", 2).Add("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope().WithIdentityInsertOn("Family"), ExpectedValues.New("Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 2).Add("Family_Id", 1));
         }
 
         [Test]
@@ -62,12 +61,12 @@ namespace Tests
                 .Go(fakeConnection);
 
             // Assert
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope(), ExpectedValues.New("Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id", 2).Add("Family_Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope(), ExpectedValues.New("Id", 2));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id", 3).Add("Family_Id", 2));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope(), ExpectedValues.New("Id", 4).Add("Family_Id", 2));
+            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope().WithIdentityInsertOn("Family"), ExpectedValues.New("Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 2).Add("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope().WithIdentityInsertOn("Family"), ExpectedValues.New("Id", 2));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 3).Add("Family_Id", 2));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 4).Add("Family_Id", 2));
         }
 
 
