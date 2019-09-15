@@ -6,9 +6,9 @@ namespace CaptainData.Rules.PreDefined
     public class DefaultRule : IRule
     {
 
-        public void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
+        public void Apply(RowInstruction rowInstruction)
         {
-            var columns = instructionContext.CaptainContext.SchemaInformation[instructionContext.TableName];
+            var columns = rowInstruction.CaptainContext.SchemaInformation[rowInstruction.TableName];
             foreach (var column in columns)
             {
                 if (!rowInstruction.IsDefinedFor(column.ColumnName))

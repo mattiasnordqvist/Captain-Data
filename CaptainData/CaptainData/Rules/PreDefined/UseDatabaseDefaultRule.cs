@@ -9,12 +9,12 @@ namespace CaptainData.Rules.PreDefined
     {
         public bool ApplyOnNullableColumns { get; set; } = false;
 
-        public override void Apply(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext)
+        public override void Apply(RowInstruction rowInstruction, ColumnSchema column)
         {
             rowInstruction.ColumnInstructions[column.ColumnName] = ColumnInstruction.Ignore();            
         }
 
-        public override bool Match(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext)
+        public override bool Match(RowInstruction rowInstruction, ColumnSchema column)
         {
             if (rowInstruction.IsDefinedFor(column.ColumnName) || !column.HasDefault)
             {

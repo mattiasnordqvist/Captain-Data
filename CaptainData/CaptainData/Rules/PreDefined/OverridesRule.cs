@@ -5,13 +5,13 @@ namespace CaptainData.Rules.PreDefined
 {
     public class OverridesRule : IRule
     {
-        public void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
+        public void Apply(RowInstruction rowInstruction)
         {
-            var overrides = instructionContext.Overrides;
+            var overrides = rowInstruction.Overrides;
 
             var overridesDictionary = overrides?.GetType().GetProperties().ToDictionary(x => x.Name, x => new ColumnInstruction(x.GetValue(overrides, null)));
 
-            var columns = instructionContext.CaptainContext.SchemaInformation[instructionContext.TableName];
+            var columns = rowInstruction.CaptainContext.SchemaInformation[rowInstruction.TableName];
             foreach (var column in columns)
             {
                 if (overridesDictionary?.ContainsKey(column.ColumnName) ?? false)

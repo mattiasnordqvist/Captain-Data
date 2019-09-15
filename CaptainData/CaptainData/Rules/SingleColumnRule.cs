@@ -4,21 +4,21 @@ namespace CaptainData.Rules
 {
     public abstract class SingleColumnRule : IRule
     {
-        public void Apply(RowInstruction rowInstruction, InstructionContext instructionContext)
+        public void Apply(RowInstruction rowInstruction)
         {
-            var columns = instructionContext.CaptainContext.SchemaInformation[instructionContext.TableName];
+            var columns = rowInstruction.CaptainContext.SchemaInformation[rowInstruction.TableName];
             foreach (var column in columns)
             {
-                if (Match(rowInstruction, column, instructionContext))
+                if (Match(rowInstruction, column))
                 {
-                    Apply(rowInstruction, column, instructionContext);
+                    Apply(rowInstruction, column);
                 }
             }
         }
 
-        public abstract bool Match(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext);
+        public abstract bool Match(RowInstruction rowInstruction, ColumnSchema column);
 
-        public abstract void Apply(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext);
+        public abstract void Apply(RowInstruction rowInstruction, ColumnSchema column);
 
         
 

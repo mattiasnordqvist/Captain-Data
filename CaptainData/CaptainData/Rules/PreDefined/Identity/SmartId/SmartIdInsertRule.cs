@@ -10,9 +10,9 @@ namespace CaptainData.Rules.PreDefined.Identity
         private ISmartIdInsertForeignKeyResolver foreignKeyResolver;
         private bool foreignKeysEnabled;
 
-        public override void Apply(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext)
+        public override void Apply(RowInstruction rowInstruction, ColumnSchema column)
         {
-            var context = GetContext(instructionContext);
+            var context = GetSmartIdContext(rowInstruction);
             if (column.IsIdentity)
             {
                 rowInstruction.ColumnInstructions[column.ColumnName] = new ColumnInstruction(NextId(column.TableName, context));
@@ -27,13 +27,13 @@ namespace CaptainData.Rules.PreDefined.Identity
             }
         }
 
-        private Dictionary<string, T> GetContext(InstructionContext instructionContext)
+        private Dictionary<string, T> GetSmartIdContext(RowInstruction rowInstruction)
         {
-            if (!instructionContext.CaptainContext.ContainsKey("SmartIdContext"))
+            if (!rowInstruction.CaptainContext.ContainsKey("SmartIdContext"))
             {
-                instructionContext.CaptainContext["SmartIdContext"] = new Dictionary<string, T>();
+                rowInstruction.CaptainContext["SmartIdContext"] = new Dictionary<string, T>();
             }
-            return (Dictionary<string, T>)instructionContext.CaptainContext["SmartIdContext"];
+            return (Dictionary<string, T>)rowInstruction.CaptainContext["SmartIdContext"];
         }
 
         private T NextId(string tableName, Dictionary<string, T> context)
@@ -51,9 +51,9 @@ namespace CaptainData.Rules.PreDefined.Identity
 
         protected abstract T GetNextId(T lastId);
 
-        public override bool Match(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext)
+        public override bool Match(RowInstruction rowInstruction, ColumnSchema column)
         {
-            return column.IsIdentity || (foreignKeysEnabled && foreignKeyResolver.Is(column, GetContext(instructionContext).Select(x => x.Key).ToArray()));
+            return column.IsIdentity || (foreignKeysEnabled && foreignKeyResolver.Is(column, GetSmartIdContext(rowInstruction).Select(x => x.Key).ToArray()));
         }
 
         public SmartIdInsertRule<T> EnableForeignKeys(Func<FKDefaults, ISmartIdInsertForeignKeyResolver> foreignKeyResolver)

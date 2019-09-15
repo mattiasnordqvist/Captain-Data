@@ -17,7 +17,6 @@ namespace CaptainData
 
         private readonly List<IRule> _rules = new List<IRule>();
         private readonly List<RowInstruction> _instructions = new List<RowInstruction>();
-        private readonly List<InstructionContext> _instructionContexts = new List<InstructionContext>();
 
         public ISqlGenerator SqlGenerator { get; set; } = new SqlGenerator();
         public ISqlExecutor SqlExecutor { get; set; } = new SqlExecutor();
@@ -33,21 +32,15 @@ namespace CaptainData
 
         public Captain Insert(string tableName, object overrides = null)
         {
-            var instructionContext = new InstructionContext { TableName = tableName, Overrides = overrides ?? new { }, CaptainContext = Context };
-            AddInstructionContext(instructionContext);
+            var instruction = new RowInstruction {
+                TableName = tableName,
+                Overrides = overrides ?? new { },
+                CaptainContext = this.Context,
+            };
+            AddInstruction(instruction);
             return this;
         }
 
-        public void Insert(InstructionContext instructionContext)
-        {
-            var instruction = new RowInstruction();
-            instruction.SetContext(instructionContext);
-            OverridesRuleSet?.Apply(instruction, instructionContext);
-            _rules.ForEach(x => x.Apply(instruction, instructionContext));
-            DefaultRuleSet?.Apply(instruction, instructionContext);
-
-            AddInstruction(instruction);
-        }
 
         public async Task<Captain> Go(IDbTransaction transaction)
         {
@@ -61,7 +54,6 @@ namespace CaptainData
                 Context.SchemaInformation = SchemaInformationFactory.Create(connection, transaction);
             }
 
-            _instructionContexts.ForEach(Insert);
             foreach (var x in _instructions)
             {
                 await Apply(connection, transaction, x);
@@ -74,8 +66,13 @@ namespace CaptainData
         
         internal async Task Apply(IDbConnection connection, IDbTransaction transaction, RowInstruction rowInstruction)
         {
+            OverridesRuleSet?.Apply(rowInstruction);
+            _rules.ForEach(x => x.Apply(rowInstruction));
+            DefaultRuleSet?.Apply(rowInstruction);
+
             var sql = new StringBuilder();
             var values = new DynamicParameters();
+            
             foreach (var x in rowInstruction.ColumnInstructions)
             {
                 values.Add(x.Key, x.Value.Value, x.Value.DbType);
@@ -91,7 +88,7 @@ namespace CaptainData
             {
                 sql.AppendLine($"SET IDENTITY_INSERT {rowInstruction.TableName} OFF");
             }
-            rowInstruction.InstructionContext.CaptainContext.ScopeIdentity = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
+            rowInstruction.CaptainContext.ScopeIdentity = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
         }
 
         internal void AddInstruction(RowInstruction rowInstruction)
@@ -99,15 +96,9 @@ namespace CaptainData
             _instructions.Add(rowInstruction);
         }
 
-        internal void AddInstructionContext(InstructionContext instructionContext)
-        {
-            _instructionContexts.Add(instructionContext);
-        }
-
         internal void ClearInstructions()
         {
             _instructions.Clear();
-            _instructionContexts.Clear();
         }
 
         public void AddRule(IRule rule)

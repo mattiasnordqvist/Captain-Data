@@ -5,12 +5,11 @@ namespace CaptainData
 {
     public class RowInstruction
     {
+        public CaptainContext CaptainContext { get; set; }
 
-        public void SetContext(InstructionContext instructionContext)
-        {
-            InstructionContext = instructionContext;
+        public string TableName { get; set; }
 
-        }
+        public object Overrides { get; set; }
 
         internal IDictionary<string, ColumnInstruction> NonEmptyColumnInstructions
         {
@@ -19,8 +18,6 @@ namespace CaptainData
                 return ColumnInstructions.Where(x => x.Key != null).ToDictionary(x => x.Key, x => x.Value);
             }
         }
-
-        public InstructionContext InstructionContext { get; private set; }
 
         public Dictionary<string, ColumnInstruction> ColumnInstructions { get; private set; } = new Dictionary<string, ColumnInstruction>();
 
@@ -31,9 +28,8 @@ namespace CaptainData
                 ColumnInstructions[index] = value;
             }
         }
-        public string TableName => InstructionContext.TableName;
         public bool IsDefinedFor(string columnName) => ColumnInstructions.ContainsKey(columnName) && !ColumnInstructions[columnName].IgnoreColumn;
 
-        public bool RequiresIdentityInsert => ColumnInstructions.Any(x => IsDefinedFor(x.Key) && InstructionContext.CaptainContext.SchemaInformation[InstructionContext.TableName][x.Key].IsIdentity);
+        public bool RequiresIdentityInsert => ColumnInstructions.Any(x => IsDefinedFor(x.Key) && CaptainContext.SchemaInformation[TableName][x.Key].IsIdentity);
     }
 }

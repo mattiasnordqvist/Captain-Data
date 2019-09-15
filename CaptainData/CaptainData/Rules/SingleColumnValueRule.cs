@@ -6,19 +6,19 @@ namespace CaptainData.Rules
     {
         public bool OverwriteExistingInstruction { get; set; } = false;
 
-        public override void Apply(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext)
+        public override void Apply(RowInstruction rowInstruction, ColumnSchema column)
         {
-            rowInstruction[column.ColumnName] = Value(column, instructionContext);
+            rowInstruction[column.ColumnName] = Value(column, rowInstruction);
         }
 
-        public override bool Match(RowInstruction rowInstruction, ColumnSchema column, InstructionContext instructionContext)
+        public override bool Match(RowInstruction rowInstruction, ColumnSchema column)
         {
             return (!rowInstruction.IsDefinedFor(column.ColumnName) || OverwriteExistingInstruction)
-                   && Match(column, instructionContext);
+                   && Match(column, rowInstruction);
         }
 
-        public abstract bool Match(ColumnSchema column, InstructionContext instructionContext);
+        public abstract bool Match(ColumnSchema column, RowInstruction rowInstruction);
 
-        public abstract ColumnInstruction Value(ColumnSchema column, InstructionContext instructionContext);
+        public abstract ColumnInstruction Value(ColumnSchema column, RowInstruction rowInstruction);
     }
 }
