@@ -30,7 +30,8 @@ var id = captain.Context.ScopeIdentity;
 You can also provide your own defaults in a fashion that will apply to all inserts created by the same Captain.
 
 ```csharp
-var captain = new Captain(new MyFineRule());
+var captain = new Captain();
+captain.AddRule(new MyFineRule());
 ```
 
 Your rule should implement `IRule`. Instead of explaining exactly how it works right now (this part of CaptainData is being refactored), I'll just provide an example.  
