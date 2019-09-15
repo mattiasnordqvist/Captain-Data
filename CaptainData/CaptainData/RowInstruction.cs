@@ -31,7 +31,9 @@ namespace CaptainData
                 ColumnInstructions[index] = value;
             }
         }
-
+        public string TableName => InstructionContext.TableName;
         public bool IsDefinedFor(string columnName) => ColumnInstructions.ContainsKey(columnName) && !ColumnInstructions[columnName].IgnoreColumn;
+
+        public bool RequiresIdentityInsert => ColumnInstructions.Any(x => IsDefinedFor(x.Key) && InstructionContext.CaptainContext.SchemaInformation[InstructionContext.TableName][x.Key].IsIdentity);
     }
 }

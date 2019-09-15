@@ -1,5 +1,4 @@
 ﻿using System;
-using CaptainData.Rules;
 using CaptainData.Schema;
 
 namespace CaptainData.Rules.PreDefined

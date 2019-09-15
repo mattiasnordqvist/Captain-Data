@@ -81,17 +81,15 @@ namespace CaptainData
                 values.Add(x.Key, x.Value.Value, x.Value.DbType);
             }
 
-            bool requiresIdentityInsert = rowInstruction.ColumnInstructions.Any(x => rowInstruction.IsDefinedFor(x.Key) && rowInstruction.InstructionContext.CaptainContext.SchemaInformation[rowInstruction.InstructionContext.TableName][x.Key].IsIdentity);
-
-            if (requiresIdentityInsert)
+            if (rowInstruction.RequiresIdentityInsert)
             {
-                sql.AppendLine($"SET IDENTITY_INSERT {rowInstruction.InstructionContext.TableName} ON");
+                sql.AppendLine($"SET IDENTITY_INSERT {rowInstruction.TableName} ON");
             }
             sql.AppendLine(SqlGenerator.CreateInsertStatement(rowInstruction));
             sql.AppendLine(SqlGenerator.CreateGetScopeIdentityQuery(rowInstruction));
-            if (requiresIdentityInsert)
+            if (rowInstruction.RequiresIdentityInsert)
             {
-                sql.AppendLine($"SET IDENTITY_INSERT {rowInstruction.InstructionContext.TableName} OFF");
+                sql.AppendLine($"SET IDENTITY_INSERT {rowInstruction.TableName} OFF");
             }
             rowInstruction.InstructionContext.CaptainContext.ScopeIdentity = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
         }
