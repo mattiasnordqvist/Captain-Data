@@ -73,7 +73,7 @@ namespace CaptainData
             var sql = new StringBuilder();
             var values = new DynamicParameters();
             
-            foreach (var x in rowInstruction.ColumnInstructions)
+            foreach (var x in rowInstruction.InsertableColumns)
             {
                 values.Add(x.Key, x.Value.Value, x.Value.DbType);
             }

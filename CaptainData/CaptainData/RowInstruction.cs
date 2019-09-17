@@ -11,11 +11,13 @@ namespace CaptainData
 
         public object Overrides { get; set; }
 
-        internal IDictionary<string, ColumnInstruction> NonEmptyColumnInstructions
+        public IDictionary<string, ColumnInstruction> InsertableColumns
         {
             get
             {
-                return ColumnInstructions.Where(x => x.Key != null).ToDictionary(x => x.Key, x => x.Value);
+                return ColumnInstructions
+                    .Where(x => x.Value?.IgnoreColumn == false)
+                    .ToDictionary(x => x.Key, x => x.Value);
             }
         }
 
@@ -28,7 +30,7 @@ namespace CaptainData
                 ColumnInstructions[index] = value;
             }
         }
-        public bool IsDefinedFor(string columnName) => ColumnInstructions.ContainsKey(columnName) && !ColumnInstructions[columnName].IgnoreColumn;
+        public bool IsDefinedFor(string columnName) => ColumnInstructions.ContainsKey(columnName);
 
         public bool RequiresIdentityInsert => ColumnInstructions.Any(x => IsDefinedFor(x.Key) && CaptainContext.SchemaInformation[TableName][x.Key].IsIdentity);
     }
