@@ -9,7 +9,7 @@ namespace CaptainData
 
         public Captain Captain { get; private set; }
 
-        public object LastId(string tableName) => LastIds()[tableName];
+        public object LastId(string tableName) => LastIds()[SchemaInformation.FTN(tableName)];
         public object ScopeIdentity { get; internal set; }
 
         internal CaptainContext(Captain captain)

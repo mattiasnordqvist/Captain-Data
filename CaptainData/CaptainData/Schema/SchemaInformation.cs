@@ -20,5 +20,12 @@ namespace CaptainData.Schema
 
             }
         }
+
+        public static string FTN(string tableName)
+        {
+            var schemaName = tableName.Contains(".") ? tableName.Split('.')[0].Trim('[', ']') : "dbo";
+            tableName = (tableName.Contains(".") ? tableName.Split('.')[1] : tableName).Trim('[', ']');
+            return $"[{schemaName}].[{tableName}]";
+        }
     }
 }

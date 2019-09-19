@@ -18,5 +18,6 @@ namespace CaptainData.Schema
         public bool IsComputed { get; set; }
 
         public bool HasDefault { get; set; }
+
     }
 }

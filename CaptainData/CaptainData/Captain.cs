@@ -90,13 +90,16 @@ namespace CaptainData
             }
             var lastId = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
             rowInstruction.CaptainContext.ScopeIdentity = lastId;
-            if (!rowInstruction.CaptainContext.LastIds().ContainsKey(rowInstruction.TableName))
+
+            var fullTableName = SchemaInformation.FTN(rowInstruction.TableName);
+
+            if (!rowInstruction.CaptainContext.LastIds().ContainsKey(fullTableName))
             {
-                rowInstruction.CaptainContext.LastIds().Add(rowInstruction.TableName, lastId);
+                rowInstruction.CaptainContext.LastIds().Add(fullTableName, lastId);
             }
             else
             {
-                rowInstruction.CaptainContext.LastIds()[rowInstruction.TableName] = lastId;
+                rowInstruction.CaptainContext.LastIds()[fullTableName] = lastId;
             }
 
         }
