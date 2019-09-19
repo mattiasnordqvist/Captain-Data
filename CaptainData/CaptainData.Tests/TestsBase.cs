@@ -9,26 +9,31 @@ namespace Tests
 {
     public abstract class TestsBase
     {
-        protected ISqlExecutor sqlExecutor = A.Fake<ISqlExecutor>();
-        protected IDbConnection fakeConnection = A.Fake<IDbConnection>();
-        protected Captain captain;
+        protected ISqlExecutor SqlExecutor = A.Fake<ISqlExecutor>();
+        protected IDbConnection FakeConnection = A.Fake<IDbConnection>();
+        protected Captain Captain;
 
         [SetUp]
         public void BaseSetup()
         {
-            captain = new Captain()
+            Captain = new Captain()
             {
-                SqlExecutor = sqlExecutor
+                SqlExecutor = SqlExecutor
             };
         }
 
         protected void AssertSql(ExpectedSql expectedSql, Func<DynamicParameters, bool> p)
         {
-            A.CallTo(() => sqlExecutor.Execute(
+            A.CallTo(() => SqlExecutor.Execute(
                 A<IDbConnection>.Ignored,
                 expectedSql,
                 A<DynamicParameters>.That.Matches(p, "Parameters does not match"),
                 A<IDbTransaction>.Ignored)).MustHaveHappened();
+        }
+
+        protected void AssertSql(ExpectedSql expectedSql)
+        {
+            AssertSql(expectedSql, x => true);
         }
 
     }

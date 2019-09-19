@@ -9,11 +9,21 @@ namespace CaptainData
 
         public Captain Captain { get; private set; }
 
+        public object LastId(string tableName) => LastIds()[tableName];
         public object ScopeIdentity { get; internal set; }
 
         internal CaptainContext(Captain captain)
         {
             Captain = captain;
+        }
+
+        internal Dictionary<string, object> LastIds()
+        {
+            if (!ContainsKey("LastIdContext"))
+            {
+                this["LastIdContext"] = new Dictionary<string, object>();
+            }
+            return (Dictionary<string, object>)this["LastIdContext"];
         }
     }
 }

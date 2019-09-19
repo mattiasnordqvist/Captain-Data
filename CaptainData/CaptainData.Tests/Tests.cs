@@ -14,14 +14,14 @@ namespace Tests
         [SetUp]
         public void Setup()
         {
-            captain.SchemaInformationFactory = new FakeSchemaFactory();
+            Captain.SchemaInformationFactory = new FakeSchemaFactory();
         }
 
         [Test]
         public async Task Insert_MissingDataForNvarcharColumn_GeneratesEmptyStringForColumn()
         {
             // Act
-            await captain.Insert("Person").Go(fakeConnection);
+            await Captain.Insert("Person").Go(FakeConnection);
 
             // Assert
             AssertSql(ExpectedSql.New("INSERT INTO Person ([Name]) VALUES (@Name);").AddSelectScope(), 

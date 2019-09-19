@@ -1,4 +1,3 @@
-using CaptainData.Rules;
 using System.Linq;
 
 namespace CaptainData.Rules.PreDefined

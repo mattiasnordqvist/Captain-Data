@@ -88,7 +88,17 @@ namespace CaptainData
             {
                 sql.AppendLine($"SET IDENTITY_INSERT {rowInstruction.TableName} OFF");
             }
-            rowInstruction.CaptainContext.ScopeIdentity = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
+            var lastId = await SqlExecutor.Execute(connection, sql.ToString(), values, transaction);
+            rowInstruction.CaptainContext.ScopeIdentity = lastId;
+            if (!rowInstruction.CaptainContext.LastIds().ContainsKey(rowInstruction.TableName))
+            {
+                rowInstruction.CaptainContext.LastIds().Add(rowInstruction.TableName, lastId);
+            }
+            else
+            {
+                rowInstruction.CaptainContext.LastIds()[rowInstruction.TableName] = lastId;
+            }
+
         }
 
         internal void AddInstruction(RowInstruction rowInstruction)

@@ -1,5 +1,7 @@
 ﻿using CaptainData.Rules.PreDefined.Identity;
 using CaptainData.Schema;
+using Dapper;
+using FakeItEasy;
 using NUnit.Framework;
 using System.Data;
 using System.Threading.Tasks;
@@ -12,61 +14,64 @@ namespace Tests
         [SetUp]
         public void Setup()
         {
-            captain.AddRule(new SmartIntIdInsertRule()
-                .EnableForeignKeys(x => x.Matches__Table_Id()));
-            captain.SchemaInformationFactory = new FakeSchemaFactory();
+            Captain.AddRule(new SmartForeignKeyRule());
+            Captain.SchemaInformationFactory = new FakeSchemaFactory();
         }
 
         [Test]
         public async Task Insert_ForeignKeyIsSetToLastGeneratedIdForReferencedTable()
         {
+            A.CallTo(() => SqlExecutor.Execute(A<IDbConnection>.Ignored, A<string>.Ignored, A<DynamicParameters>.Ignored, A<IDbTransaction>.Ignored)).Returns(1);
             // Act
-            await captain
+            await Captain
                 .Insert("Family")
                 .Insert("Person")
-                .Go(fakeConnection);
+                .Go(FakeConnection);
 
             // Assert
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope().WithIdentityInsertOn("Family"), ExpectedValues.New("Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Family () VALUES ();").AddSelectScope());
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Family_Id]) VALUES (@Family_Id);").AddSelectScope(), ExpectedValues.New("Family_Id", 1));
         }
 
         [Test]
         public async Task Insert_ForeignKeyIsSetToLastGeneratedIdForReferencedTable_TwoReferences()
         {
+            A.CallTo(() => SqlExecutor.Execute(A<IDbConnection>.Ignored, A<string>.Ignored, A<DynamicParameters>.Ignored, A<IDbTransaction>.Ignored)).Returns(1);
             // Act
-            await captain
+            await Captain
                 .Insert("Family")
                 .Insert("Person")
                 .Insert("Person")
-                .Go(fakeConnection);
+                .Go(FakeConnection);
 
             // Assert
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope().WithIdentityInsertOn("Family"), ExpectedValues.New("Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 2).Add("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Family () VALUES ();").AddSelectScope());
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Family_Id]) VALUES (@Family_Id);").AddSelectScope(), ExpectedValues.New("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Family_Id]) VALUES (@Family_Id);").AddSelectScope(), ExpectedValues.New("Family_Id", 1));
         }
 
         [Test]
         public async Task Insert_ForeignKeyIsSetToLastGeneratedIdForReferencedTable_TwoReferencesToTwoFamilies()
         {
+            var nextId = 0;
+            A.CallTo(() => SqlExecutor.Execute(A<IDbConnection>.Ignored, A<string>.Ignored, A<DynamicParameters>.Ignored, A<IDbTransaction>.Ignored)).ReturnsLazily(() => ++nextId);
             // Act
-            await captain
+            await Captain
                 .Insert("Family")
                 .Insert("Person")
                 .Insert("Person")
                 .Insert("Family")
                 .Insert("Person")
                 .Insert("Person")
-                .Go(fakeConnection);
+                .Go(FakeConnection);
 
             // Assert
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope().WithIdentityInsertOn("Family"), ExpectedValues.New("Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 1).Add("Family_Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 2).Add("Family_Id", 1));
-            AssertSql(ExpectedSql.New("INSERT INTO Family ([Id]) VALUES (@Id);").AddSelectScope().WithIdentityInsertOn("Family"), ExpectedValues.New("Id", 2));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 3).Add("Family_Id", 2));
-            AssertSql(ExpectedSql.New("INSERT INTO Person ([Id], [Family_Id]) VALUES (@Id, @Family_Id);").AddSelectScope().WithIdentityInsertOn("Person"), ExpectedValues.New("Id", 4).Add("Family_Id", 2));
+            AssertSql(ExpectedSql.New("INSERT INTO Family () VALUES ();").AddSelectScope());
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Family_Id]) VALUES (@Family_Id);").AddSelectScope(), ExpectedValues.New("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Family_Id]) VALUES (@Family_Id);").AddSelectScope(), ExpectedValues.New("Family_Id", 1));
+            AssertSql(ExpectedSql.New("INSERT INTO Family () VALUES ();").AddSelectScope());
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Family_Id]) VALUES (@Family_Id);").AddSelectScope(), ExpectedValues.New("Family_Id", 4));
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Family_Id]) VALUES (@Family_Id);").AddSelectScope(), ExpectedValues.New("Family_Id", 4));
         }
 
 
