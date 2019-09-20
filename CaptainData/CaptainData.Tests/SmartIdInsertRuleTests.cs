@@ -84,6 +84,19 @@ namespace Tests
             AssertSql(ExpectedSql.New("INSERT INTO sales.SaleService ([Sale_Id]) VALUES (@Sale_Id);").AddSelectScope(), ExpectedValues.New("Sale_Id", 2));
         }
 
+        [Test]
+        public async Task Insert_ForeignKey_WorksWithEscapedTableNames()
+        {
+            // Act
+            await Captain
+                .Insert("[User]")
+                .Insert("sales.Sale")
+                .Go(FakeConnection);
+
+            // Assert
+            AssertSql(ExpectedSql.New("INSERT INTO sales.Sale ([User_Id]) VALUES (@User_Id);").AddSelectScope(), ExpectedValues.New("User_Id", 1));
+        }
+
 
 
         private class FakeSchemaFactory : ISchemaInformationFactory
@@ -96,8 +109,12 @@ namespace Tests
                     new ColumnSchema{TableName = "Person", ColumnName = "Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = true, IsNullable = false, TableSchema = "dbo" },
                     new ColumnSchema{TableName = "Person", ColumnName = "Family_Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = false, IsNullable = false, TableSchema = "dbo" },
 
+                    new ColumnSchema{TableName = "User", ColumnName = "Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = true, IsNullable = false, TableSchema = "dbo" },
                     new ColumnSchema{TableName = "Sale", ColumnName = "Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = true, IsNullable = false, TableSchema = "sales" },
+                    new ColumnSchema{TableName = "Sale", ColumnName = "User_Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = false, IsNullable = false, TableSchema = "sales" },
                     new ColumnSchema{TableName = "SaleService", ColumnName = "Sale_Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = false, IsNullable = false, TableSchema = "sales" },
+
+
                 });
             }
         }

@@ -5,12 +5,23 @@ namespace CaptainData
 {
     public class ColumnInstruction
     {
+        private object _value;
+
         public ColumnInstruction(object value)
         {
             Value = value;
         }
 
-        public object Value { get; set; }
+        public object Value { set => _value = value; }
+
+        public object GetValue()
+        {
+            if(_value is Delegate d)
+            {
+                _value = d.DynamicInvoke();
+            }
+            return _value;
+        }
 
         public DbType? DbType { get; set; }
 

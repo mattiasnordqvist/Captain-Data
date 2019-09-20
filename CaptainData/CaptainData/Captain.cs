@@ -75,7 +75,7 @@ namespace CaptainData
             
             foreach (var x in rowInstruction.ColumnInstructions)
             {
-                values.Add(x.Key, x.Value.Value, x.Value.DbType);
+                values.Add(x.Key, x.Value.GetValue(), x.Value.DbType);
             }
 
             if (rowInstruction.RequiresIdentityInsert)

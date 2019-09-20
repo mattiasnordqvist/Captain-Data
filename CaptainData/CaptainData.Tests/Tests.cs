@@ -29,6 +29,18 @@ namespace Tests
 
         }
 
+        [Test]
+        public async Task Insert_FunctionsWork()
+        {
+            // Act
+            await Captain.Insert("Person", new { Name = (Func<string>) (() => "lateboundname")}).Go(FakeConnection);
+
+            // Assert
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Name]) VALUES (@Name);").AddSelectScope(),
+                ExpectedValues.New("Name", "lateboundname"));
+
+        }
+
         private class FakeSchemaFactory : ISchemaInformationFactory
         {
             public SchemaInformation Create(IDbConnection connection, IDbTransaction transaction)
