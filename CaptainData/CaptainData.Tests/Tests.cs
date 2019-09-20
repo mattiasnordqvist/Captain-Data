@@ -41,6 +41,21 @@ namespace Tests
 
         }
 
+        [Test]
+        public async Task Insert_CallbacksWork()
+        {
+            int callbackCaptureId = 0;
+            // Act
+            await Captain.Insert("Person", new { Name = "test" }).Go(FakeConnection);
+            await Captain.Insert("Person", new { Name = "test" }, callback: (Action<int>)(c => callbackCaptureId = c)).Go(FakeConnection);
+
+            // Assert
+            AssertSql(ExpectedSql.New("INSERT INTO Person ([Name]) VALUES (@Name);").AddSelectScope(),
+                ExpectedValues.New("Name", "test"));
+            Assert.AreEqual(2, callbackCaptureId);
+
+        }
+
         private class FakeSchemaFactory : ISchemaInformationFactory
         {
             public SchemaInformation Create(IDbConnection connection, IDbTransaction transaction)

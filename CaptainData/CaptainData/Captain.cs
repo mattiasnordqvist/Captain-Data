@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -30,12 +31,13 @@ namespace CaptainData
             Context = new CaptainContext(this);
         }
 
-        public Captain Insert(string tableName, object overrides = null)
+        public Captain Insert(string tableName, object overrides = null, Delegate callback = null)
         {
             var instruction = new RowInstruction {
                 TableName = tableName,
                 Overrides = overrides ?? new { },
                 CaptainContext = this.Context,
+                Callback = callback,
             };
             AddInstruction(instruction);
             return this;
@@ -101,6 +103,7 @@ namespace CaptainData
             {
                 rowInstruction.CaptainContext.LastIds()[fullTableName] = lastId;
             }
+            rowInstruction.Callback?.DynamicInvoke(lastId);
 
         }
 
