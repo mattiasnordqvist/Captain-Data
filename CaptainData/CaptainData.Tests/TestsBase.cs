@@ -9,13 +9,16 @@ namespace Tests
 {
     public abstract class TestsBase
     {
-        protected ISqlExecutor SqlExecutor = A.Fake<ISqlExecutor>();
+        protected ISqlExecutor SqlExecutor;
         protected IDbConnection FakeConnection = A.Fake<IDbConnection>();
         protected Captain Captain;
 
         [SetUp]
         public void BaseSetup()
         {
+            SqlExecutor = A.Fake<ISqlExecutor>();
+            var nextId = 0;
+            A.CallTo(() => SqlExecutor.Execute(A<IDbConnection>.Ignored, A<string>.Ignored, A<DynamicParameters>.Ignored, A<IDbTransaction>.Ignored)).ReturnsLazily(() => ++nextId);
             Captain = new Captain()
             {
                 SqlExecutor = SqlExecutor

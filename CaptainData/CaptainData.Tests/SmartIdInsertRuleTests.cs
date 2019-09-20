@@ -10,7 +10,7 @@ namespace Tests
 {
     public class SmartIdInsertRuleTests : TestsBase
     {
-     
+
         [SetUp]
         public void Setup()
         {
@@ -21,7 +21,6 @@ namespace Tests
         [Test]
         public async Task Insert_ForeignKeyIsSetToLastGeneratedIdForReferencedTable()
         {
-            A.CallTo(() => SqlExecutor.Execute(A<IDbConnection>.Ignored, A<string>.Ignored, A<DynamicParameters>.Ignored, A<IDbTransaction>.Ignored)).Returns(1);
             // Act
             await Captain
                 .Insert("Family")
@@ -36,7 +35,6 @@ namespace Tests
         [Test]
         public async Task Insert_ForeignKeyIsSetToLastGeneratedIdForReferencedTable_TwoReferences()
         {
-            A.CallTo(() => SqlExecutor.Execute(A<IDbConnection>.Ignored, A<string>.Ignored, A<DynamicParameters>.Ignored, A<IDbTransaction>.Ignored)).Returns(1);
             // Act
             await Captain
                 .Insert("Family")
@@ -53,8 +51,6 @@ namespace Tests
         [Test]
         public async Task Insert_ForeignKeyIsSetToLastGeneratedIdForReferencedTable_TwoReferencesToTwoFamilies()
         {
-            var nextId = 0;
-            A.CallTo(() => SqlExecutor.Execute(A<IDbConnection>.Ignored, A<string>.Ignored, A<DynamicParameters>.Ignored, A<IDbTransaction>.Ignored)).ReturnsLazily(() => ++nextId);
             // Act
             await Captain
                 .Insert("Family")
@@ -74,6 +70,20 @@ namespace Tests
             AssertSql(ExpectedSql.New("INSERT INTO Person ([Family_Id]) VALUES (@Family_Id);").AddSelectScope(), ExpectedValues.New("Family_Id", 4));
         }
 
+        [Test]
+        public async Task Insert_ForeignKey_WorksWithSchemasOtherThanDbo()
+        {
+            // Act
+            await Captain
+                .Insert("sales.Sale")
+                .Insert("sales.Sale")
+                .Insert("sales.SaleService")
+                .Go(FakeConnection);
+
+            // Assert
+            AssertSql(ExpectedSql.New("INSERT INTO sales.SaleService ([Sale_Id]) VALUES (@Sale_Id);").AddSelectScope(), ExpectedValues.New("Sale_Id", 2));
+        }
+
 
 
         private class FakeSchemaFactory : ISchemaInformationFactory
@@ -85,6 +95,9 @@ namespace Tests
                     new ColumnSchema{TableName = "Family", ColumnName = "Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = true, IsNullable = false, TableSchema = "dbo" },
                     new ColumnSchema{TableName = "Person", ColumnName = "Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = true, IsNullable = false, TableSchema = "dbo" },
                     new ColumnSchema{TableName = "Person", ColumnName = "Family_Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = false, IsNullable = false, TableSchema = "dbo" },
+
+                    new ColumnSchema{TableName = "Sale", ColumnName = "Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = true, IsNullable = false, TableSchema = "sales" },
+                    new ColumnSchema{TableName = "SaleService", ColumnName = "Sale_Id", DataType = "int", HasDefault = false, IsComputed = false, IsIdentity = false, IsNullable = false, TableSchema = "sales" },
                 });
             }
         }
