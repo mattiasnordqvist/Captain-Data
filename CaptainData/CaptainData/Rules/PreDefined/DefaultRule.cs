@@ -5,7 +5,6 @@ namespace CaptainData.Rules.PreDefined
 {
     public class DefaultRule : IRule
     {
-
         public void Apply(RowInstruction rowInstruction)
         {
             var columns = rowInstruction.CaptainContext.SchemaInformation[rowInstruction.TableName];
@@ -26,6 +25,11 @@ namespace CaptainData.Rules.PreDefined
             }
 
             if (column.IsIdentity)
+            {
+                return;
+            }
+
+            if (column.HasDefault)
             {
                 return;
             }

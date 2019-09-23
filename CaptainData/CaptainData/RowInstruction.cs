@@ -11,16 +11,6 @@ namespace CaptainData
 
         public object Overrides { get; set; }
 
-        public IDictionary<string, ColumnInstruction> InsertableColumns
-        {
-            get
-            {
-                return ColumnInstructions
-                    .Where(x => x.Value?.IgnoreColumn == false)
-                    .ToDictionary(x => x.Key, x => x.Value);
-            }
-        }
-
         public Dictionary<string, ColumnInstruction> ColumnInstructions { get; private set; } = new Dictionary<string, ColumnInstruction>();
 
         public ColumnInstruction this[string index]
