@@ -29,7 +29,7 @@ namespace CaptainData
                 ColumnInstructions[index] = value;
             }
         }
-        public bool IsDefinedFor(string columnName) => ColumnInstructions.ContainsKey(columnName) && !ColumnInstructions[columnName].IgnoreColumn;
+        public bool IsDefinedFor(string columnName) => ColumnInstructions.ContainsKey(columnName);
 
         public bool RequiresIdentityInsert => ColumnInstructions.Any(x => IsDefinedFor(x.Key) && CaptainContext.SchemaInformation[TableName][x.Key].IsIdentity);
 
