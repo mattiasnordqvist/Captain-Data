@@ -47,6 +47,7 @@ namespace CaptainData.Rules.PreDefined
                     case "smallint":
                     case "bigint":
                     case "decimal":
+                    case "numeric":
                         rowInstruction[column.ColumnName] = 0;
                         break;
                     case "nvarchar":
@@ -56,6 +57,7 @@ namespace CaptainData.Rules.PreDefined
                     case "bit":
                         rowInstruction[column.ColumnName] = false;
                         break;
+                    case "date":
                     case "datetime":
                         rowInstruction[column.ColumnName] = new DateTime(1753, 1, 1, 12, 0, 0);
                         break;
