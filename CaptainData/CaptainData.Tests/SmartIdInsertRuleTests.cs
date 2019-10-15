@@ -14,7 +14,7 @@ namespace Tests
         [SetUp]
         public void Setup()
         {
-            Captain.AddRule(new SmartForeignKeyRule());
+            Captain.AddRule(new SmartForeignKeyRule(new ColumnSuffixMatchStrategy()));
             Captain.SchemaInformationFactory = new FakeSchemaFactory();
         }
 
