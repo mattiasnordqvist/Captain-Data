@@ -17,6 +17,12 @@ namespace Tests
             var e =  new ExpectedValues();
             return e.Add(name, value);
         }
+
+        internal static ExpectedValues New<T>(string name, T value, Func<T,T,bool> comparator)
+        {
+            var e = new ExpectedValues();
+            return e.Add(name, value, comparator);
+        }
         internal static ExpectedValues Empty()
         {
             return new ExpectedValues();
@@ -24,7 +30,13 @@ namespace Tests
 
         public ExpectedValues Add<T>(string name, T value)
         {
-            Predicates.Add(x => x.Get<T>(name).Equals(value));
+            Add(name, value, (a, b) => a.Equals(b));
+            return this;
+        }
+
+        public ExpectedValues Add<T>(string name, T value, Func<T,T,bool> comparator)
+        {
+            Predicates.Add(x => comparator(x.Get<T>(name),value));
             return this;
         }
 

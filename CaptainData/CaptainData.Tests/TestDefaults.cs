@@ -63,17 +63,12 @@ namespace Tests
         {
             Captain.SchemaInformationFactory = new FakeSchemaFactory(dataType);
             await Captain.Insert("Test").Go(FakeConnection);
-            AssertInsert(dataType);
+            AssertSql(ExpectedSql.New($"INSERT INTO Test ([{dataType}]) VALUES (@{dataType});").AddSelectScope(), ExpectedValues.New(dataType, expectedValues, (a,b) => a.SequenceEqual(b)));
         }
 
         private void AssertInsert<T>(string type, T value)
         {
             AssertSql(ExpectedSql.New($"INSERT INTO Test ([{type}]) VALUES (@{type});").AddSelectScope(), ExpectedValues.New(type, value));
-        }
-
-        private void AssertInsert(string type)
-        {
-            AssertSql(ExpectedSql.New($"INSERT INTO Test ([{type}]) VALUES (@{type});").AddSelectScope());
         }
 
         private class FakeSchemaFactory : ISchemaInformationFactory
