@@ -59,6 +59,7 @@ namespace CaptainData.Rules.PreDefined
                         break;
                     case "date":
                     case "datetime":
+                    case "datetime2":
                         rowInstruction[column.ColumnName] = new DateTime(1753, 1, 1, 12, 0, 0);
                         break;
                     case "varbinary":
