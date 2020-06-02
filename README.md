@@ -1,5 +1,5 @@
 # Captain-Data (v2.0)
-I'm sick of generating database data for integrations tests and migration seeds by hand. Most data I don't even care about but it is enforced by the schema. Let's create some sensible convention based tool for auto-generating sql server data.
+I'm tired of generating database data for integrations tests and migration seeds by hand. Most data I don't even care about but it is enforced by the schema. Let's create some sensible convention based tool for auto-generating sql server data.
 
 Migrating from pre v2.0? Scroll down to end of ReadMe
 
